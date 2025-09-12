@@ -1,36 +1,58 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>VERUS - Clima Organizacional</title>
     <link rel="stylesheet" href="assets/css/style.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
+
 <body>
     <!-- Header -->
     <header class="header">
         <div class="container">
-            <div class="logo">
-                <h1>VERUS</h1>
-            </div>
-            <nav class="nav">
-                <div class="menu-toggle">
-                    <i class="fas fa-bars"></i>
-                </div>
-                <ul class="nav-menu">
-                    <li><a href="#home" class="nav-link">Home</a></li>
-                    <li><a href="#questionario" class="nav-link">Questionário</a></li>
-                    <li><a href="#solucoes" class="nav-link">Soluções</a></li>
-                </ul>
-            </nav>
-            <div class="login-btn">
-                <button class="btn-login" onclick="openLoginModal()">
-                    <i class="fas fa-sign-in-alt"></i> Login
+            <nav class="navbar w-100 d-flex justify-content-space-evenly">
+                <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas"
+                    data-bs-target="#offcanvasDarkNavbar" aria-controls="offcanvasDarkNavbar"
+                    aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
                 </button>
-            </div>
+
+                <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasDarkNavbar"
+                    aria-labelledby="offcanvasDarkNavbarLabel">
+                    <div class="offcanvas-header">
+                        <h5 class="offcanvas-title" id="offcanvasDarkNavbarLabel">Menu</h5>
+                        <button type="button" class="btn-close btn-close-dark" data-bs-dismiss="offcanvas"
+                            aria-label="Close"></button>
+                    </div>
+                    <div class="offcanvas-body">
+                        <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
+                            <li class="nav-item"><a href="#home" class="nav-text">Home</a></li>
+                            <li class="nav-item"><a href="#questionario" class="nav-text">Questionário</a></li>
+                            <li class="nav-item"><a href="#solucoes" class="nav-link">Soluções</a></li>
+                        </ul>
+                    </div>
+                </div>
+
+
+                <div class="logo">
+                    <h1>VERUS</h1>
+                </div>
+                <div class="login-btn">
+                    <button class="btn-login" onclick="openLoginModal()">
+                        <i class="fas fa-sign-in-alt"></i> Login
+                    </button>
+                </div>
+            </nav>
         </div>
+        </div>
+
     </header>
 
     <!-- Main Content -->
@@ -41,7 +63,11 @@
                 <div class="hero-content">
                     <h2>Transforme Informações em Ações Estratégicas</h2>
                     <p class="hero-text">
-                        Em um mercado cada vez mais dinâmico e competitivo, compreender o clima organizacional tornou-se essencial para o sucesso e a sustentabilidade das empresas. Nosso objetivo é promover uma cultura organizacional mais saudável, produtiva e alinhada aos valores da empresa, por meio de dados reais, obtidos diretamente da experiência dos profissionais que vivenciam o dia a dia da organização.
+                        Em um mercado cada vez mais dinâmico e competitivo, compreender o clima organizacional tornou-se
+                        essencial para o sucesso e a sustentabilidade das empresas. Nosso objetivo é promover uma
+                        cultura organizacional mais saudável, produtiva e alinhada aos valores da empresa, por meio de
+                        dados reais, obtidos diretamente da experiência dos profissionais que vivenciam o dia a dia da
+                        organização.
                     </p>
                     <p class="hero-text">
                         Explore nosso sistema, aplique diagnósticos e transforme informações em ações estratégicas!
@@ -63,19 +89,28 @@
 
         <!-- Questionário Section -->
         <section id="questionario" class="questionario-section">
-            <div class="container">
+            <div class="container d-flex flex-column justify-content-center align-items-center">
                 <h2>Pesquisa de Clima Organizacional</h2>
                 <div class="intro-text">
-                    <p>Sua participação na pesquisa é essencial para entendermos o clima organizacional atual e identificar áreas que precisam ser melhoradas. Com essas informações, poderemos criar um ambiente de trabalho mais saudável, motivador e produtivo para todos.</p>
+                    <p>Sua participação na pesquisa é essencial para entendermos o clima organizacional atual e
+                        identificar áreas que precisam ser melhoradas. Com essas informações, poderemos criar um
+                        ambiente de trabalho mais saudável, motivador e produtivo para todos.</p>
                 </div>
-                <div class="questionario-container">
-                    <div class="login-required">
-                        <i class="fas fa-lock"></i>
-                        <h3>Login Necessário</h3>
-                        <p>Para acessar o questionário, faça login como funcionário ou empresa.</p>
-                        <button class="btn-primary" onclick="openLoginModal()">
-                            <i class="fas fa-sign-in-alt"></i> Fazer Login
-                        </button>
+                <div class="card" style="width:60%">
+                    <div class="card-body d-flex justify-content-center align-items-center">
+                        <div class="login-required">
+                            <i class="fas fa-lock"></i>
+                            <h3>Login Necessário</h3>
+                            <p>Para acessar o questionário, faça login como funcionário ou empresa.</p>
+                            <button class="btn-primary" onclick="openLoginModal()">
+                                <svg xmlns="http://www.w3.org/2000/svg" height="44px" viewBox="0 -960 960 960"
+                                    width="44px">
+                                    <path
+                                        d="M480-120v-80h280v-560H480v-80h280q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120H480Zm-80-160-55-58 102-102H120v-80h327L345-622l55-58 200 200-200 200Z" />
+                                </svg>
+                                Fazer Login
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -83,24 +118,33 @@
 
         <!-- Soluções Section -->
         <section id="solucoes" class="solucoes-section">
-            <div class="container">
+            <div class="container  d-flex flex-column justify-content-center align-items-center">
                 <h2>Soluções Propostas</h2>
                 <div class="intro-text">
-                    <p>Apresentamos soluções de melhorias baseadas no feedback real dos colaboradores, customizadas para resolver os pontos mais críticos identificados em nossa pesquisa.</p>
+                    <p>Apresentamos soluções de melhorias baseadas no feedback real dos colaboradores, customizadas para
+                        resolver os pontos mais críticos identificados em nossa pesquisa.</p>
                 </div>
-                <div class="solucoes-container">
-                    <div class="login-required">
-                        <i class="fas fa-building"></i>
-                        <h3>Acesso Restrito</h3>
-                        <p>Esta seção está disponível apenas para empresas logadas.</p>
-                        <button class="btn-primary" onclick="openLoginModal()">
-                            <i class="fas fa-sign-in-alt"></i> Login Empresa
-                        </button>
+                <div class="card" style="width:60%">
+                    <div class="card-body d-flex justify-content-center align-items-center">
+                        <div class="login-required">
+                            <i class="fas fa-building"></i>
+                            <h3>Acesso Restrito</h3>
+                            <p>Esta seção está disponível apenas para empresas logadas.</p>
+                            <button class="btn-primary" onclick="openLoginModal()">
+                                <svg xmlns="http://www.w3.org/2000/svg" height="44px" viewBox="0 -960 960 960"
+                                    width="44px">
+                                    <path
+                                        d="M480-120v-80h280v-560H480v-80h280q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120H480Zm-80-160-55-58 102-102H120v-80h327L345-622l55-58 200 200-200 200Z" />
+                                </svg>
+                                Login Empresa
+                            </button>
+                        </div>
                     </div>
                 </div>
-            </div>
         </section>
     </main>
+
+
 
     <!-- Footer -->
     <footer class="footer">
@@ -165,13 +209,15 @@
             <div class="policy-content">
                 <h3>1. Coleta de Dados</h3>
                 <p>Coletamos apenas os dados necessários para a realização da pesquisa de clima organizacional.</p>
-                
+
                 <h3>2. Anonimato</h3>
-                <p>Garantimos o anonimato dos participantes da pesquisa, preservando a confidencialidade das respostas.</p>
-                
+                <p>Garantimos o anonimato dos participantes da pesquisa, preservando a confidencialidade das respostas.
+                </p>
+
                 <h3>3. Uso dos Dados</h3>
-                <p>Os dados coletados são utilizados exclusivamente para análise do clima organizacional e geração de relatórios.</p>
-                
+                <p>Os dados coletados são utilizados exclusivamente para análise do clima organizacional e geração de
+                    relatórios.</p>
+
                 <h3>4. Segurança</h3>
                 <p>Implementamos medidas de segurança para proteger os dados coletados contra acesso não autorizado.</p>
             </div>
@@ -186,13 +232,14 @@
             <div class="terms-content">
                 <h3>1. Aceitação dos Termos</h3>
                 <p>Ao utilizar o sistema VERUS, você concorda com estes termos de uso.</p>
-                
+
                 <h3>2. Uso Responsável</h3>
-                <p>O sistema deve ser utilizado de forma responsável e ética, respeitando a privacidade dos participantes.</p>
-                
+                <p>O sistema deve ser utilizado de forma responsável e ética, respeitando a privacidade dos
+                    participantes.</p>
+
                 <h3>3. Confidencialidade</h3>
                 <p>As informações obtidas através do sistema são confidenciais e devem ser tratadas com discrição.</p>
-                
+
                 <h3>4. Limitações</h3>
                 <p>O VERUS não se responsabiliza por decisões tomadas com base nos relatórios gerados pelo sistema.</p>
             </div>
@@ -200,5 +247,9 @@
     </div>
 
     <script src="assets/js/script.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
+        crossorigin="anonymous"></script>
 </body>
+
 </html>
