@@ -82,16 +82,19 @@ function updateUIForLoggedUser() {
 }
 
 // Funções de Modal
-function openLoginModal() {
-    $('#loginModal').fadeIn(300);
+function openLoginModal(tipo) {
+    $('#'+tipo+'Modal').fadeIn(300);
     $('body').addClass('modal-open');
 }
 
+
+
 function closeLoginModal() {
-    $('#loginModal').fadeOut(300);
-    $('#login-modal-content').html(`
+    $('#loginModal').fadeOut(300, function(){
+
+$('#login-modal-content').html(`
         <span class="close" onclick="closeLoginModal()">&times;</span>
-            <h2>Escolha seu tipo de acesso</h2>
+            <h2 id='tituloModal'>Escolha seu tipo de acesso</h2>
             <div class="login-options" id="login-options">
                 <div class="login-option" onclick="loginAs('funcionario')">
                     <i class="fas fa-user"></i>
@@ -105,13 +108,37 @@ function closeLoginModal() {
                 </div>
             </div>
     `);
-    $('body').removeClass('modal-open');
+    $('body').removeClass('modal-open');});
+}
+
+function closeRegisterModal() {
+    
+    $('#registerModal').fadeOut(300, function(){
+
+$('#register-modal-content').html(`
+        <span class="close" onclick="closeRegisterModal()">&times;</span>
+            <h2 id='tituloModal'>Escolha seu tipo de acesso</h2>
+            <div class="register-options" id="register-options">
+                <div class="register-option" onclick="loginAs('funcionario')">
+                    <i class="fas fa-user"></i>
+                    <h3>Funcionário</h3>
+                    <p>Responder questionário de clima organizacional</p>
+                </div>
+                <div class="register-option" onclick="loginAs('empresa')">
+                    <i class="fas fa-building"></i>
+                    <h3>Empresa</h3>
+                    <p>Acessar relatórios e soluções</p>
+                </div>
+            </div>
+    `);
+    $('body').removeClass('modal-open');});
+
 }
 
 function cancelLoginModal() {
     $('#login-modal-content').html(`
         <span class="close" onclick="closeLoginModal()">&times;</span>
-            <h2>Escolha seu tipo de acesso</h2>
+            <h2 id='tituloModal'>Escolha seu tipo de acesso</h2>
             <div class="login-options" id="login-options">
                 <div class="login-option" onclick="loginAs('funcionario')">
                     <i class="fas fa-user"></i>
@@ -177,8 +204,18 @@ function loginAs(userType) {
     
 }
 
+function showModals(tipo){
+
+    $('#loginModal').fadeIn(300);
+    $('body').addClass('modal-open');
+    loginAs(tipo)
+    document.getElementById('btncancel').style.display = "none";
+
+
+}
 // Mostrar formulário de login para funcionário
 function showFuncionarioLogin() {
+    document.getElementById("tituloModal").innerHTML = ""
     const loginHTML = `
         <div class="login-form">
             <h3>Login Funcionário</h3>
@@ -192,8 +229,8 @@ function showFuncionarioLogin() {
                     <input type="password" id="senha" name="senha" required>
                 </div>
                 <div class="form-actions">
-                    <button type="submit" class="btn-primary">Entrar</button>
-                    <button type="button" class="btn-secondary" onclick="cancelLoginModal()">Cancelar</button>
+                    <button type="button" id='btncancel' class="btn-primary" onclick="cancelLoginModal()">Cancelar</button>
+                    <button type="submit" class="btn-secondary">Entrar</button>
                 </div>
             </form>
         </div>
@@ -205,6 +242,7 @@ function showFuncionarioLogin() {
 
 // Mostrar formulário de login para empresa
 function showEmpresaLogin() {
+    document.getElementById("tituloModal").innerHTML = ""
     const loginHTML = `
         <div class="login-form">
             <h3>Login Empresa</h3>
@@ -218,8 +256,8 @@ function showEmpresaLogin() {
                     <input type="password" id="senha" name="senha" required>
                 </div>
                 <div class="form-actions">
-                    <button type="submit" class="btn-primary">Entrar</button>
-                    <button type="button" class="btn-secondary" onclick="cancelLoginModal()">Cancelar</button>
+                    <button type="button" id='btncancel' class="btn-primary" onclick="cancelLoginModal()">Cancelar</button>
+                    <button type="submit" class="btn-secondary">Entrar</button>
                 </div>
             </form>
         </div>
@@ -725,8 +763,8 @@ const messageStyles = `
         
         .form-actions {
             display: flex;
-            gap: 10px;
-            justify-content: flex-end;
+            gap: 20px;
+            justify-content:center;
             margin-top: 20px;
         }
         

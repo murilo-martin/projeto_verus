@@ -32,20 +32,18 @@
                             aria-label="Close"></button>
                     </div>
                     <div class="offcanvas-body">
-                        <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
-                            <li class="nav-item"><a href="#home" class="nav-text">Home</a></li>
-                            <li class="nav-item"><a href="#questionario" class="nav-text">Questionário</a></li>
-                            <li class="nav-item"><a href="#solucoes" class="nav-link">Soluções</a></li>
+                        <ul class="navbar-nav d-flex flex-column gap-3">
+                            <a class="nav-text" onclick="showModals('funcionario')"><li class="nav-item">Login funcionario</li></a>
+                            <a class="nav-text" onclick="showModals('empresa')"><li class="nav-item">Login Empresa</li></a>
+                            <a class="nav-text"><li class="nav-item">Categorias de Feedback</li></a>
                         </ul>
                     </div>
                 </div>
-
-
                 <div class="logo">
                     <h1>VERUS</h1>
                 </div>
                 <div class="login-btn">
-                    <button class="btn-login" onclick="openLoginModal()">
+                    <button class="btn-login" onclick="openLoginModal('login')">
                         <i class="fas fa-sign-in-alt"></i> Login
                     </button>
                 </div>
@@ -73,11 +71,11 @@
                         Explore nosso sistema, aplique diagnósticos e transforme informações em ações estratégicas!
                     </p>
                     <div class="cta-buttons">
-                        <button class="btn-primary" onclick="openLoginModal()">
-                            <i class="fas fa-chart-line"></i> Começar Diagnóstico
+                        <button class="btn-primary">
+                            <i class="fas fa-chart-line"></i>Ver Tipos de Feedbacks
                         </button>
-                        <button class="btn-secondary" onclick="scrollToSection('questionario')">
-                            <i class="fas fa-clipboard-list"></i> Ver Questionário
+                        <button class="btn-secondary" onclick="openLoginModal('register')">
+                            <i class="fas fa-clipboard-list"></i>Cadastre-se
                         </button>
                     </div>
                 </div>
@@ -102,7 +100,7 @@
                             <i class="fas fa-lock"></i>
                             <h3>Login Necessário</h3>
                             <p>Para acessar o questionário, faça login como funcionário ou empresa.</p>
-                            <button class="btn-primary" onclick="openLoginModal()">
+                            <button class="btn-primary" onclick="openLoginModal('login')">
                                 <svg xmlns="http://www.w3.org/2000/svg" height="44px" viewBox="0 -960 960 960"
                                     width="44px">
                                     <path
@@ -115,37 +113,6 @@
                 </div>
             </div>
         </section>
-
-        <!-- Soluções Section -->
-        <section id="solucoes" class="solucoes-section">
-            <div class="container  d-flex flex-column justify-content-center align-items-center">
-                <h2>Soluções Propostas</h2>
-                <div class="intro-text">
-                    <p>Apresentamos soluções de melhorias baseadas no feedback real dos colaboradores, customizadas para
-                        resolver os pontos mais críticos identificados em nossa pesquisa.</p>
-                </div>
-                <div class="card" style="width:60%">
-                    <div class="card-body d-flex justify-content-center align-items-center">
-                        <div class="login-required">
-                            <i class="fas fa-building"></i>
-                            <h3>Acesso Restrito</h3>
-                            <p>Esta seção está disponível apenas para empresas logadas.</p>
-                            <button class="btn-primary" onclick="openLoginModal()">
-                                <svg xmlns="http://www.w3.org/2000/svg" height="44px" viewBox="0 -960 960 960"
-                                    width="44px">
-                                    <path
-                                        d="M480-120v-80h280v-560H480v-80h280q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120H480Zm-80-160-55-58 102-102H120v-80h327L345-622l55-58 200 200-200 200Z" />
-                                </svg>
-                                Login Empresa
-                            </button>
-                        </div>
-                    </div>
-                </div>
-        </section>
-    </main>
-
-
-
     <!-- Footer -->
     <footer class="footer">
         <div class="container">
@@ -184,8 +151,8 @@
     <!-- Login Modal -->
     <div id="loginModal" class="modal">
         <div class="modal-content" id="login-modal-content">
-            <span class="close" onclick="closeLoginModal()">&times;</span>
-            <h2>Escolha seu tipo de acesso</h2>
+            <span class="close" onclick="closeLoginModal('login')">&times;</span>
+            <h2 id="tituloModal">Escolha seu tipo de acesso</h2>
             <div class="login-options" id="login-options">
                 <div class="login-option" onclick="loginAs('funcionario')">
                     <i class="fas fa-user"></i>
@@ -196,6 +163,25 @@
                     <i class="fas fa-building"></i>
                     <h3>Empresa</h3>
                     <p>Acessar relatórios e soluções</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+     <div id="registerModal" class="modal">
+        <div class="modal-content" id="register-modal-content">
+            <span class="close" onclick="closeLoginModal('register')">&times;</span>
+            <h2 id="tituloModal">Escolha seu tipo de Cadastro</h2>
+            <div class="register-options" id="register-options">
+                <div class="register-option" onclick="loginAs('funcionario')">
+                    <i class="fas fa-user"></i>
+                    <h3>Funcionário</h3>
+                    <p>Cadastrar como funcionario de sua empresa!</p>
+                </div>
+                <div class="register-option" onclick="loginAs('empresa')">
+                    <i class="fas fa-building"></i>
+                    <h3>Empresa</h3>
+                    <p>Cadastrar sua empresa</p>
                 </div>
             </div>
         </div>
