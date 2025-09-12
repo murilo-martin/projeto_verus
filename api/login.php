@@ -6,9 +6,9 @@
     if($tipo == 'funcionario'){
 
         $email = $_POST['email'];
-        $senha = $senha['senha'];
+        $senha = $_POST['senha'];
 
-        $query = mysqli_fetch_array(mysqli_query($conexao,"SELECT email,senha FROM funcionarios WHERE email = $email"));
+        $query = mysqli_fetch_array(mysqli_query($conexao,"SELECT email,senha FROM funcionarios WHERE email = '$email'"));
 
         if(empty($query)){
 

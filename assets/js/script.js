@@ -403,19 +403,33 @@ function setupFuncionarioLoginForm(type) {
       },
       success: function (response) {
         
-        if(response != 'sucesso'){
+        if(response == 'sucesso'){
+          // Salvar dados do usuário no localStorage
+          const userData = {
+            id: email, // Usando email como ID temporário
+            email: email,
+            tipo: 'funcionario'
+          };
+          localStorage.setItem('userData', JSON.stringify(userData));
+          localStorage.setItem('userType', 'funcionario');
+          
           closeLoginModal();
           showSuccessMessage(
             "Login realizado com sucesso! Redirecionando para o questionário..."
           );
+          
+          // Redirecionar para a página do questionário após 1 segundo
+          setTimeout(function () {
+            window.location.href = "questionario.php";
+          }, 1000);
 
         }else if(response == 'erro'){
 
-            showErrorMessage(response.error || "Email nao cadastrado");
+            showErrorMessage("Email não cadastrado");
 
         }else{
 
-            showErrorMessage(response.error || "Senha errada");
+            showErrorMessage("Senha errada");
         }
       },
       error: function (xhr) {
