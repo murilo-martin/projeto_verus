@@ -11,6 +11,8 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/cleave.js@1.6.0/dist/cleave.min.js"></script>
+
 </head>
 
 <body>
@@ -33,9 +35,15 @@
                     </div>
                     <div class="offcanvas-body">
                         <ul class="navbar-nav d-flex flex-column gap-3">
-                            <a class="nav-text" onclick="showModals('funcionario')"><li class="nav-item">Login funcionario</li></a>
-                            <a class="nav-text" onclick="showModals('empresa')"><li class="nav-item">Login Empresa</li></a>
-                            <a class="nav-text"><li class="nav-item">Categorias de Feedback</li></a>
+                            <a class="nav-text" onclick="showModals('funcionario')">
+                                <li class="nav-item">Login funcionario</li>
+                            </a>
+                            <a class="nav-text" onclick="showModals('empresa')">
+                                <li class="nav-item">Login Empresa</li>
+                            </a>
+                            <a class="nav-text">
+                                <li class="nav-item">Categorias de Feedback</li>
+                            </a>
                         </ul>
                     </div>
                 </div>
@@ -113,129 +121,104 @@
                 </div>
             </div>
         </section>
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="container">
-            <div class="footer-content">
-                <div class="footer-section">
-                    <h3>VERUS</h3>
-                    <p>Transformando o clima organizacional através de dados reais.</p>
-                </div>
-                <div class="footer-section">
-                    <h4>Contato</h4>
-                    <p><i class="fas fa-envelope"></i> contato@verus.com.br</p>
-                    <p><i class="fas fa-phone"></i> (11) 9999-9999</p>
-                </div>
-                <div class="footer-section">
-                    <h4>Redes Sociais</h4>
-                    <div class="social-links">
-                        <a href="#"><i class="fab fa-linkedin"></i></a>
-                        <a href="#"><i class="fab fa-facebook"></i></a>
-                        <a href="#"><i class="fab fa-instagram"></i></a>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="container">
+                <div class="footer-content">
+                    <div class="footer-section">
+                        <h3>VERUS</h3>
+                        <p>Transformando o clima organizacional através de dados reais.</p>
+                    </div>
+                    <div class="footer-section">
+                        <h4>Contato</h4>
+                        <p><i class="fas fa-envelope"></i> contato@verus.com.br</p>
+                        <p><i class="fas fa-phone"></i> (11) 9999-9999</p>
+                    </div>
+                    <div class="footer-section">
+                        <h4>Redes Sociais</h4>
+                        <div class="social-links">
+                            <a href="#"><i class="fab fa-linkedin"></i></a>
+                            <a href="#"><i class="fab fa-facebook"></i></a>
+                            <a href="#"><i class="fab fa-instagram"></i></a>
+                        </div>
+                    </div>
+                    <div class="footer-section">
+                        <h4>Links Úteis</h4>
+                        <ul>
+                            <li><a href="#" onclick="showPrivacyPolicy()">Política de Privacidade</a></li>
+                            <li><a href="#" onclick="showTerms()">Termos de Uso</a></li>
+                        </ul>
                     </div>
                 </div>
-                <div class="footer-section">
-                    <h4>Links Úteis</h4>
-                    <ul>
-                        <li><a href="#" onclick="showPrivacyPolicy()">Política de Privacidade</a></li>
-                        <li><a href="#" onclick="showTerms()">Termos de Uso</a></li>
-                    </ul>
+                <div class="footer-bottom">
+                    <p>&copy; 2024 VERUS. Todos os direitos reservados.</p>
                 </div>
             </div>
-            <div class="footer-bottom">
-                <p>&copy; 2024 VERUS. Todos os direitos reservados.</p>
+        </footer>
+
+        <!-- Login Modal -->
+        <div id="modal" class="modal">
+            <div class="modal-content" id="login-modal-content">
+
             </div>
         </div>
-    </footer>
 
-    <!-- Login Modal -->
-    <div id="loginModal" class="modal">
-        <div class="modal-content" id="login-modal-content">
-            <span class="close" onclick="closeLoginModal('login')">&times;</span>
-            <h2 id="tituloModal">Escolha seu tipo de acesso</h2>
-            <div class="login-options" id="login-options">
-                <div class="login-option" onclick="loginAs('funcionario')">
-                    <i class="fas fa-user"></i>
-                    <h3>Funcionário</h3>
-                    <p>Responder questionário de clima organizacional</p>
-                </div>
-                <div class="login-option" onclick="loginAs('empresa')">
-                    <i class="fas fa-building"></i>
-                    <h3>Empresa</h3>
-                    <p>Acessar relatórios e soluções</p>
-                </div>
-            </div>
-        </div>
-    </div>
+        <!-- Privacy Policy Modal -->
+        <div id="privacyModal" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="closePrivacyModal()">&times;</span>
+                <h2>Política de Privacidade</h2>
+                <div class="policy-content">
+                    <h3>1. Coleta de Dados</h3>
+                    <p>Coletamos apenas os dados necessários para a realização da pesquisa de clima organizacional.</p>
 
-     <div id="registerModal" class="modal">
-        <div class="modal-content" id="register-modal-content">
-            <span class="close" onclick="closeLoginModal('register')">&times;</span>
-            <h2 id="tituloModal">Escolha seu tipo de Cadastro</h2>
-            <div class="register-options" id="register-options">
-                <div class="register-option" onclick="loginAs('funcionario')">
-                    <i class="fas fa-user"></i>
-                    <h3>Funcionário</h3>
-                    <p>Cadastrar como funcionario de sua empresa!</p>
-                </div>
-                <div class="register-option" onclick="loginAs('empresa')">
-                    <i class="fas fa-building"></i>
-                    <h3>Empresa</h3>
-                    <p>Cadastrar sua empresa</p>
+                    <h3>2. Anonimato</h3>
+                    <p>Garantimos o anonimato dos participantes da pesquisa, preservando a confidencialidade das
+                        respostas.
+                    </p>
+
+                    <h3>3. Uso dos Dados</h3>
+                    <p>Os dados coletados são utilizados exclusivamente para análise do clima organizacional e geração
+                        de
+                        relatórios.</p>
+
+                    <h3>4. Segurança</h3>
+                    <p>Implementamos medidas de segurança para proteger os dados coletados contra acesso não autorizado.
+                    </p>
                 </div>
             </div>
         </div>
-    </div>
 
-    <!-- Privacy Policy Modal -->
-    <div id="privacyModal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closePrivacyModal()">&times;</span>
-            <h2>Política de Privacidade</h2>
-            <div class="policy-content">
-                <h3>1. Coleta de Dados</h3>
-                <p>Coletamos apenas os dados necessários para a realização da pesquisa de clima organizacional.</p>
+        <!-- Terms Modal -->
+        <div id="termsModal" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="closeTermsModal()">&times;</span>
+                <h2>Termos de Uso</h2>
+                <div class="terms-content">
+                    <h3>1. Aceitação dos Termos</h3>
+                    <p>Ao utilizar o sistema VERUS, você concorda com estes termos de uso.</p>
 
-                <h3>2. Anonimato</h3>
-                <p>Garantimos o anonimato dos participantes da pesquisa, preservando a confidencialidade das respostas.
-                </p>
+                    <h3>2. Uso Responsável</h3>
+                    <p>O sistema deve ser utilizado de forma responsável e ética, respeitando a privacidade dos
+                        participantes.</p>
 
-                <h3>3. Uso dos Dados</h3>
-                <p>Os dados coletados são utilizados exclusivamente para análise do clima organizacional e geração de
-                    relatórios.</p>
+                    <h3>3. Confidencialidade</h3>
+                    <p>As informações obtidas através do sistema são confidenciais e devem ser tratadas com discrição.
+                    </p>
 
-                <h3>4. Segurança</h3>
-                <p>Implementamos medidas de segurança para proteger os dados coletados contra acesso não autorizado.</p>
+                    <h3>4. Limitações</h3>
+                    <p>O VERUS não se responsabiliza por decisões tomadas com base nos relatórios gerados pelo sistema.
+                    </p>
+                </div>
             </div>
         </div>
-    </div>
 
-    <!-- Terms Modal -->
-    <div id="termsModal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeTermsModal()">&times;</span>
-            <h2>Termos de Uso</h2>
-            <div class="terms-content">
-                <h3>1. Aceitação dos Termos</h3>
-                <p>Ao utilizar o sistema VERUS, você concorda com estes termos de uso.</p>
+        <script src="assets/js/script.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
+            crossorigin="anonymous"></script>
 
-                <h3>2. Uso Responsável</h3>
-                <p>O sistema deve ser utilizado de forma responsável e ética, respeitando a privacidade dos
-                    participantes.</p>
-
-                <h3>3. Confidencialidade</h3>
-                <p>As informações obtidas através do sistema são confidenciais e devem ser tratadas com discrição.</p>
-
-                <h3>4. Limitações</h3>
-                <p>O VERUS não se responsabiliza por decisões tomadas com base nos relatórios gerados pelo sistema.</p>
-            </div>
-        </div>
-    </div>
-
-    <script src="assets/js/script.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
-        crossorigin="anonymous"></script>
 </body>
 
 </html>

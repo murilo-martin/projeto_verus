@@ -3,96 +3,124 @@ let currentUserType = null;
 let currentUser = null;
 
 // Inicialização quando o DOM estiver carregado
-$(document).ready(function() {
-    initializeApp();
+$(document).ready(function () {
+  initializeApp();
 });
 
 // Função de inicialização
 function initializeApp() {
-    setupEventListeners();
-    setupSmoothScrolling();
-    setupMobileMenu();
-    checkUserSession();
+  setupEventListeners();
+  setupSmoothScrolling();
+  setupMobileMenu();
+  checkUserSession();
 }
 
 // Configurar event listeners
 function setupEventListeners() {
-    // Fechar modais ao clicar fora
-    $(window).click(function(event) {
-        if (event.target.classList.contains('modal')) {
-            closeAllModals();
-        }
-    });
+  // Fechar modais ao clicar fora
+  $(window).click(function (event) {
+    if (event.target.classList.contains("modal")) {
+      closeAllModals();
+    }
+  });
 
-    // Fechar modais com ESC
-    $(document).keydown(function(event) {
-        if (event.key === "Escape") {
-            closeAllModals();
-        }
-    });
+  // Fechar modais com ESC
+  $(document).keydown(function (event) {
+    if (event.key === "Escape") {
+      closeAllModals();
+    }
+  });
 
-    // Navegação suave
-    $('.nav-link').click(function(e) {
-        e.preventDefault();
-        const target = $(this).attr('href');
-        scrollToSection(target);
-    });
+  // Navegação suave
+  $(".nav-link").click(function (e) {
+    e.preventDefault();
+    const target = $(this).attr("href");
+    scrollToSection(target);
+  });
 }
 
 // Configurar scroll suave
 function setupSmoothScrolling() {
-    $('a[href^="#"]').click(function(e) {
-        e.preventDefault();
-        const target = $(this).attr('href');
-        scrollToSection(target);
-    });
+  $('a[href^="#"]').click(function (e) {
+    e.preventDefault();
+    const target = $(this).attr("href");
+    scrollToSection(target);
+  });
 }
 
 // Configurar menu mobile
 function setupMobileMenu() {
-    $('.menu-toggle').click(function() {
-        $('.nav-menu').toggleClass('active');
-    });
+  $(".menu-toggle").click(function () {
+    $(".nav-menu").toggleClass("active");
+  });
 
-    // Fechar menu ao clicar em um link
-    $('.nav-link').click(function() {
-        $('.nav-menu').removeClass('active');
-    });
+  // Fechar menu ao clicar em um link
+  $(".nav-link").click(function () {
+    $(".nav-menu").removeClass("active");
+  });
 }
 
 // Verificar sessão do usuário
 function checkUserSession() {
-    const userType = localStorage.getItem('userType');
-    const userData = localStorage.getItem('userData');
-    
-    if (userType && userData) {
-        currentUserType = userType;
-        currentUser = JSON.parse(userData);
-        updateUIForLoggedUser();
-    }
+  const userType = localStorage.getItem("userType");
+  const userData = localStorage.getItem("userData");
+
+  if (userType && userData) {
+    currentUserType = userType;
+    currentUser = JSON.parse(userData);
+    updateUIForLoggedUser();
+  }
 }
 
 // Atualizar UI para usuário logado
 function updateUIForLoggedUser() {
-    if (currentUserType === 'funcionario') {
-        updateQuestionarioSection();
-    } else if (currentUserType === 'empresa') {
-        updateSolucoesSection();
-    }
+  if (currentUserType === "funcionario") {
+    updateQuestionarioSection();
+  } else if (currentUserType === "empresa") {
+    updateSolucoesSection();
+  }
 }
 
 // Funções de Modal
 function openLoginModal(tipo) {
-    $('#'+tipo+'Modal').fadeIn(300);
-    $('body').addClass('modal-open');
+  typeModal(tipo);
+  $("#modal").fadeIn(300);
+  $("body").addClass("modal-open");
 }
 
+function typeModal(type) {
+  let titulo = type == "login" ? "Acesso" : "Cadastro";
+  let textoFunc =
+    type == "login"
+      ? "Responder questionário de clima organizacional"
+      : "Cadastre-se como funcionario";
+  let textoEmp =
+    type == "login"
+      ? "Acessar relatorios de sua emrpresa"
+      : "Cadastre-se sua empresa";
 
+  let textModal = `
+            <span class="close" onclick="closeLoginModal()">&times;</span>
+            <h2 id="tituloModal">Escolha seu tipo de ${titulo}</h2>
+            <div class="login-options" id="login-options">
+                <div class="login-option" onclick="loginAs('funcionario','${type}')">
+                    <i class="fas fa-user"></i>
+                    <h3>Funcionário</h3>
+                    <p>${textoFunc}</p>
+                </div>
+                <div class="login-option" onclick="loginAs('empresa','${type}')">
+                    <i class="fas fa-building"></i>
+                    <h3>Empresa</h3>
+                    <p>${textoEmp}</p>
+                </div>
+            </div>`;
+
+  $("#login-modal-content").html(textModal);
+}
 
 function closeLoginModal() {
-    $('#loginModal').fadeOut(300, function(){
-
-$('#login-modal-content').html(`
+  $("#modal").fadeOut(300, function () {
+    $("#login-modal-content").html(`
         <span class="close" onclick="closeLoginModal()">&times;</span>
             <h2 id='tituloModal'>Escolha seu tipo de acesso</h2>
             <div class="login-options" id="login-options">
@@ -108,117 +136,68 @@ $('#login-modal-content').html(`
                 </div>
             </div>
     `);
-    $('body').removeClass('modal-open');});
-}
-
-function closeRegisterModal() {
-    
-    $('#registerModal').fadeOut(300, function(){
-
-$('#register-modal-content').html(`
-        <span class="close" onclick="closeRegisterModal()">&times;</span>
-            <h2 id='tituloModal'>Escolha seu tipo de acesso</h2>
-            <div class="register-options" id="register-options">
-                <div class="register-option" onclick="loginAs('funcionario')">
-                    <i class="fas fa-user"></i>
-                    <h3>Funcionário</h3>
-                    <p>Responder questionário de clima organizacional</p>
-                </div>
-                <div class="register-option" onclick="loginAs('empresa')">
-                    <i class="fas fa-building"></i>
-                    <h3>Empresa</h3>
-                    <p>Acessar relatórios e soluções</p>
-                </div>
-            </div>
-    `);
-    $('body').removeClass('modal-open');});
-
-}
-
-function cancelLoginModal() {
-    $('#login-modal-content').html(`
-        <span class="close" onclick="closeLoginModal()">&times;</span>
-            <h2 id='tituloModal'>Escolha seu tipo de acesso</h2>
-            <div class="login-options" id="login-options">
-                <div class="login-option" onclick="loginAs('funcionario')">
-                    <i class="fas fa-user"></i>
-                    <h3>Funcionário</h3>
-                    <p>Responder questionário de clima organizacional</p>
-                </div>
-                <div class="login-option" onclick="loginAs('empresa')">
-                    <i class="fas fa-building"></i>
-                    <h3>Empresa</h3>
-                    <p>Acessar relatórios e soluções</p>
-                </div>
-            </div>
-    `);
+    $("body").removeClass("modal-open");
+  });
 }
 
 function closePrivacyModal() {
-    $('#privacyModal').fadeOut(300);
-    $('body').removeClass('modal-open');
+  $("#privacyModal").fadeOut(300);
+  $("body").removeClass("modal-open");
 }
 
 function closeTermsModal() {
-    $('#termsModal').fadeOut(300);
-    $('body').removeClass('modal-open');
+  $("#termsModal").fadeOut(300);
+  $("body").removeClass("modal-open");
 }
 
 function closeAllModals() {
-    $('.modal').fadeOut(300);
-    $('body').removeClass('modal-open');
+  $(".modal").fadeOut(300);
+  $("body").removeClass("modal-open");
 }
 
 // Funções de Política e Termos
 function showPrivacyPolicy() {
-    $('#privacyModal').fadeIn(300);
-    $('body').addClass('modal-open');
+  $("#privacyModal").fadeIn(300);
+  $("body").addClass("modal-open");
 }
 
 function showTerms() {
-    $('#termsModal').fadeIn(300);
-    $('body').addClass('modal-open');
+  $("#termsModal").fadeIn(300);
+  $("body").addClass("modal-open");
 }
-
 
 // Função de login
-function loginAs(userType) {
-    currentUserType = userType;
-    let modal = $('#login-options');
+function loginAs(userType, type) {
+  currentUserType = userType;
+  let modal = $("#login-options");
 
-    if (userType === 'funcionario') {
+  if (userType === "funcionario") {
+    showFuncionarioLogin(type);
+    modal.removeClass("login-options");
+    modal.addClass("login-options-emp");
+  } else if (userType === "empresa") {
+    showEmpresaLogin(type);
 
-        showFuncionarioLogin();
-        modal.removeClass('login-options');
-        modal.addClass('login-options-emp');
-        
-    } else if (userType === 'empresa') {
-
-        showEmpresaLogin();
-
-        modal.removeClass('login-options');
-        modal.addClass('login-options-emp');
-        
-
-    }
-    
+    modal.removeClass("login-options");
+    modal.addClass("login-options-emp");
+  }
 }
 
-function showModals(tipo){
-
-    $('#loginModal').fadeIn(300);
-    $('body').addClass('modal-open');
-    loginAs(tipo)
-    document.getElementById('btncancel').style.display = "none";
-
-
+function showModals(tipo) {
+  $("#loginModal").fadeIn(300);
+  $("body").addClass("modal-open");
+  loginAs(tipo);
+  document.getElementById("btncancel").style.display = "none";
 }
+let typeForm = "";
 // Mostrar formulário de login para funcionário
-function showFuncionarioLogin() {
-    document.getElementById("tituloModal").innerHTML = ""
-    const loginHTML = `
+function showFuncionarioLogin(type) {
+  typeForm = type == "login" ? "Login" : "Cadastro";
+  document.getElementById("tituloModal").innerHTML = "";
+
+  const loginHTML = `
         <div class="login-form">
-            <h3>Login Funcionário</h3>
+            <h3>${typeForm} Funcionário</h3>
             <form id="funcionarioLoginForm">
                 <div class="form-group">
                     <label for="email">Email:</label>
@@ -229,23 +208,84 @@ function showFuncionarioLogin() {
                     <input type="password" id="senha" name="senha" required>
                 </div>
                 <div class="form-actions">
-                    <button type="button" id='btncancel' class="btn-primary" onclick="cancelLoginModal()">Cancelar</button>
+                    <button type="button" id='btncancel' class="btn-primary" onclick="typeModal('${type}')">Cancelar</button>
                     <button type="submit" class="btn-secondary">Entrar</button>
                 </div>
             </form>
         </div>
     `;
+
+  const registerHTML = `
+        <div class="login-form">
+            <h3>${typeForm} Funcionário</h3>
+            <form id="funcionarioLoginForm">
+                <div class="form-group">
+                    <label for="nome">nome:</label>
+                    <input type="text" id="nome_regi" name="nome" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email:</label>
+                    <input type="email" id="email_regi" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="senha">Senha:</label>
+                    <input type="password" id="senha_regi" name="senha" required>
+                </div>
+                <div class="form-group">
+                    <label for="cpf">CPF:</label>
+                    <input type="text" id="cpf_regi" name="cpf" required>
+                </div>
+                <div class="form-group">
+                    <label for="cargo">Cargo:</label>
+                    <input type="text" id="cargo_regi" name="cargo" required>
+                </div>
+                
+                <div class="form-floating">
+                    <select class="form-select" id="floatingSelect" aria-label="Floating label select example">
+                        <option selected disabled></option>
+                        
+                        </select>
+                    <label for="floatingSelect">Selecione a sua empresa</label>
+                </div>
+                <div class="form-actions">
+                    <button type="button" id='btncancel' class="btn-primary" onclick="typeModal('${type}')">Cancelar</button>
+                    <button type="submit" class="btn-secondary">Cadastrar</button>
+                </div>
+            </form>
+        </div>
+    `;
     
-    $('.login-options').html(loginHTML);
-    setupFuncionarioLoginForm();
+  if (type == "login") {
+    $(".login-options").html(loginHTML);
+  } else if (type == "register") {
+    $(".login-options").html(registerHTML);
+    new Cleave('#cpf_regi', {
+                delimiters: ['.', '.', '-'],
+                blocks: [3, 3, 3, 2],
+                uppercase: true
+            });
+
+
+    $.ajax({
+      url: "api/companies.php",
+      method: "post",
+      data: {},
+      success: function (text) {
+        console.log(text)
+        $('#floatingSelect').html(text);
+      },
+    });
+  }
+  setupFuncionarioLoginForm(type);
 }
 
 // Mostrar formulário de login para empresa
-function showEmpresaLogin() {
-    document.getElementById("tituloModal").innerHTML = ""
-    const loginHTML = `
+function showEmpresaLogin(type) {
+  typeForm = type == "login" ? "Login" : "Cadastro";
+  document.getElementById("tituloModal").innerHTML = "";
+  const loginHTML = `
         <div class="login-form">
-            <h3>Login Empresa</h3>
+            <h3>${typeForm} Empresa</h3>
             <form id="empresaLoginForm">
                 <div class="form-group">
                     <label for="cnpj">CNPJ:</label>
@@ -256,117 +296,266 @@ function showEmpresaLogin() {
                     <input type="password" id="senha" name="senha" required>
                 </div>
                 <div class="form-actions">
-                    <button type="button" id='btncancel' class="btn-primary" onclick="cancelLoginModal()">Cancelar</button>
+                    <button type="button" id='btncancel' class="btn-primary" onclick="typeModal('${type}')">Cancelar</button>
                     <button type="submit" class="btn-secondary">Entrar</button>
                 </div>
             </form>
         </div>
     </div>
     `;
-    
-    $('.login-options').html(loginHTML);
-    setupEmpresaLoginForm();
+
+
+  const registerHTML = `
+        <div class="login-form">
+            <h3>${typeForm} Empresa</h3>
+            <form id="empresaLoginForm">
+                <div class="form-group">
+                    <label for="cnpj">Cnpj:</label>
+                    <input type="text" id="cnpj_regi_emp" name="cnpj" required>
+                </div>
+                <div class="form-group">
+                    <label for="nome">Nome:</label>
+                    <input type="nome" id="nome_regi_emp" name="nome" required>
+                </div>
+                <div class="form-group">
+                    <label for="senha">Senha:</label>
+                    <input type="senha" id="senha_regi_emp" name="senha" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email:</label>
+                    <input type="email" id="email_regi_emp" name="email" required>
+                </div>
+                <div class="form-floating">
+                    <select class="form-select" id="floatingSelectEmp" aria-label="Floating label select example">
+                        <option selected hidden></option>
+                        <option value="ti">Tecnologia</option>
+                        <option value="alimentacao">Alimentação e Bebidas</option>
+                        <option value="varejo">Varejo</option>
+                        <option value="financeiro">Serviços Financeiros (Bancos, Seguros)</option>
+                        <option value="telecom">Telecomunicações</option>
+                        <option value="turismo">Turismo e Hotelaria</option>
+                        <option value="transporte">Transporte e Logística</option>
+                        <option value="moda">Moda e Vestuário</option>
+                        <option value="imobiliario">Imobiliário</option>
+                        <option value="quimica">Química e Petroquímica</option>
+                        <option value="mineracao">Mineração</option>
+                        <option value="Outro">Outro</option>
+                    </select>
+                    <label for="floatingSelect">Selecione o seu setor</label>
+                </div>
+                <div class="form-actions">
+                    <button type="button" id='btncancel' class="btn-primary" onclick="typeModal('${type}')">Cancelar</button>
+                    <button type="submit" class="btn-secondary">Cadastrar</button>
+                </div>
+            </form>
+        </div>
+    `;
+  if (type == "login") {
+    $(".login-options").html(loginHTML);
+    new Cleave('#cnpj', {
+                delimiters: ['.', '.', '/','-'],
+                blocks: [2, 3, 3, 4, 2],
+                uppercase: true
+            });
+  } else if (type == "register") {
+    $(".login-options").html(registerHTML);
+new Cleave('#cnpj_regi_emp', {
+                delimiters: ['.', '.', '/','-'],
+                blocks: [2, 3, 3, 4, 2],
+                uppercase: true
+            });
+
+    $.ajax({
+      url: "api/companies.php",
+      method: "post",
+      data: {},
+      success: function (text) {
+        console.log(text)
+        $('#floatingSelect').html(text);
+      },
+    });
+  }
+
+  setupEmpresaLoginForm(type);
 }
 
+
 // Configurar formulário de login do funcionário
-function setupFuncionarioLoginForm() {
-    $('#funcionarioLoginForm').submit(function(e) {
-        e.preventDefault();
+function setupFuncionarioLoginForm(type) {
+  if(type == 'login')  
+    $("#funcionarioLoginForm").submit(function (e) {
+    e.preventDefault();
+
+    const email = $("#email").val();
+    const senha = $("#senha").val();
+    if (!email || !senha) {
+      showErrorMessage("Por favor, preencha todos os campos.");
+      return;
+    }
+    // Chamada AJAX para login
+    $.ajax({
+      url: "api/login.php",
+      method: "POST",
+      data:{
+        tipo: "funcionario",
+        email: email,
+        senha: senha,
+      },
+      success: function (response) {
         
-        const email = $('#email').val();
-        const senha = $('#senha').val();
-        
-        if (!email || !senha) {
-            showErrorMessage('Por favor, preencha todos os campos.');
-            return;
+        if(response != 'sucesso'){
+          closeLoginModal();
+          showSuccessMessage(
+            "Login realizado com sucesso! Redirecionando para o questionário..."
+          );
+
+        }else if(response == 'erro'){
+
+            showErrorMessage(response.error || "Email nao cadastrado");
+
+        }else{
+
+            showErrorMessage(response.error || "Senha errada");
         }
-        
-        // Chamada AJAX para login
-        $.ajax({
-            url: 'api/login.php',
-            method: 'POST',
-            contentType: 'application/json',
-            data: JSON.stringify({
-                tipo: 'funcionario',
-                email: email,
-                senha: senha
-            }),
-            success: function(response) {
-                if (response.success) {
-                    localStorage.setItem('userType', 'funcionario');
-                    localStorage.setItem('userData', JSON.stringify(response.user));
-                    
-                    currentUser = response.user;
-                    closeLoginModal();
-                    showSuccessMessage('Login realizado com sucesso! Redirecionando para o questionário...');
-                    
-                    // Redirecionar para a página de questionário após 1 segundo
-                    setTimeout(function() {
-                        window.location.href = 'questionario.php';
-                    }, 1000);
-                } else {
-                    showErrorMessage(response.error || 'Erro no login');
-                }
-            },
-            error: function(xhr) {
-                const response = JSON.parse(xhr.responseText);
-                showErrorMessage(response.error || 'Erro no servidor');
-            }
-        });
+      },
+      error: function (xhr) {
+        const response = JSON.parse(xhr.responseText);
+        showErrorMessage(response.error || "Erro no servidor");
+      },
     });
+  });
+
+  else{
+
+    $("#funcionarioLoginForm").submit(function (e) {
+    e.preventDefault();
+
+    const cargo = $("#cargo_regi").val();
+    const nome = $("#nome_regi").val();
+    const email = $("#email_regi").val();
+    const senha = $("#senha_regi").val();
+    const cpf = $("#cpf_regi").val();
+    const empresa_select= $("#floatingSelect").val();
+
+    // Chamada AJAX para login
+    $.ajax({
+      url: "api/register.php",
+      method: "POST",
+      data:{
+        tipo: "funcionario",
+        email: email,
+        senha: senha,
+        cpf: cpf,
+        empresa: empresa_select,
+        cargo: cargo,
+        nome: nome
+      },
+      success: function (response) {
+
+        console.log(response);
+          closeLoginModal();
+          showSuccessMessage(
+            "Cadastro realizado com SUCESSO"
+          )
+
+      },
+      error: function (xhr) {
+        const response = JSON.parse(xhr.responseText);
+        showErrorMessage(response.error || "Erro no servidor");
+      },
+    });
+  });
+
+  }
 }
 
 // Configurar formulário de login da empresa
-function setupEmpresaLoginForm() {
-    $('#empresaLoginForm').submit(function(e) {
-        e.preventDefault();
-        
-        const cnpj = $('#cnpj').val();
-        const senha = $('#senha').val();
-        
-        if (!cnpj || !senha) {
-            showErrorMessage('Por favor, preencha todos os campos.');
-            return;
-        }
-        
-        // Chamada AJAX para login
-        $.ajax({
-            url: 'api/login.php',
-            method: 'POST',
-            contentType: 'application/json',
-            data: JSON.stringify({
-                tipo: 'empresa',
-                cnpj: cnpj,
-                senha: senha
-            }),
-            success: function(response) {
-                if (response.success) {
-                    localStorage.setItem('userType', 'empresa');
-                    localStorage.setItem('userData', JSON.stringify(response.user));
-                    
-                    currentUser = response.user;
-                    closeLoginModal();
-                    showSuccessMessage('Login realizado com sucesso! Redirecionando para os relatórios...');
-                    
-                    // Redirecionar para a página de relatórios após 1 segundo
-                    setTimeout(function() {
-                        window.location.href = 'relatorios.php';
-                    }, 1000);
-                } else {
-                    showErrorMessage(response.error || 'Erro no login');
-                }
-            },
-            error: function(xhr) {
-                const response = JSON.parse(xhr.responseText);
-                showErrorMessage(response.error || 'Erro no servidor');
-            }
-        });
+function setupEmpresaLoginForm(type) {
+  
+  if(type == 'login'){  
+    
+    $("#empresaLoginForm").submit(function (e) {
+    e.preventDefault();
+
+    const cnpj = $("#cnpj").val();
+    const senha = $("#senha").val();
+
+    if (!cnpj || !senha) {
+      showErrorMessage("Por favor, preencha todos os campos.");
+      return;
+    }
+
+    // Chamada AJAX para login
+    $.ajax({
+      url: "api/login.php",
+      method: "POST",
+      data: {
+        tipo: "empresa",
+        cnpj: cnpj,
+        senha: senha,
+      },
+      success: function (response) {
+       
+          closeLoginModal();
+          showSuccessMessage(
+            "Login realizado com sucesso! Redirecionando para os relatórios..."
+          );
+
+          // Redirecionar para a página de relatórios após 1 segundo
+          setTimeout(function () {
+            window.location.href = "relatorios.php";
+          }, 1000);
+      },
+      error: function (xhr) {
+        const response = JSON.parse(xhr.responseText);
+        showErrorMessage(response.error || "Erro no servidor");
+      },
     });
+  });
+    }else{
+
+$("#empresaLoginForm").submit(function (e) {
+    e.preventDefault();
+
+    const cnpj = $("#cnpj_regi_emp").val();
+    const senha = $("#senha_regi_emp").val();
+    const setor = $("#floatingSelectEmp").val();
+    const nome = $("#nome_regi_emp").val();
+    const email = $("#email_regi_emp").val();
+    // Chamada AJAX para login
+    $.ajax({
+      url: "api/register.php",
+      method: "POST",
+      data:{
+        tipo: "empresa",
+        cnpj: cnpj,
+        senha: senha,
+        nome: nome,
+        setor: setor,
+        email: email
+      },
+      success: function (response) {
+        
+          closeLoginModal();
+          showSuccessMessage(
+            "Cadastro realizado com sucesso!"
+          );
+
+      },
+      error: function (xhr) {
+        const response = JSON.parse(xhr.responseText);
+        showErrorMessage(response.error || "Erro no servidor");
+      },
+    });
+  });
+
 }
+}
+//Masks
 
 // Atualizar seção do questionário
 function updateQuestionarioSection() {
-    const questionarioHTML = `
+  const questionarioHTML = `
         <div class="questionario-content">
             <div class="questionario-intro">
                 <h3>Pesquisa de Clima Organizacional</h3>
@@ -448,14 +637,14 @@ function updateQuestionarioSection() {
             </form>
         </div>
     `;
-    
-    $('.questionario-container').html(questionarioHTML);
-    setupQuestionarioForm();
+
+  $(".questionario-container").html(questionarioHTML);
+  setupQuestionarioForm();
 }
 
 // Atualizar seção de soluções
 function updateSolucoesSection() {
-    const solucoesHTML = `
+  const solucoesHTML = `
         <div class="solucoes-content">
             <div class="solucoes-intro">
                 <h3>Análise e Soluções Propostas</h3>
@@ -544,153 +733,165 @@ function updateSolucoesSection() {
             </div>
         </div>
     `;
-    
-    $('.solucoes-container').html(solucoesHTML);
-    setupFeedbackForm();
+
+  $(".solucoes-container").html(solucoesHTML);
+  setupFeedbackForm();
 }
 
 // Configurar formulário do questionário
 function setupQuestionarioForm() {
-    $('#questionarioForm').submit(function(e) {
-        e.preventDefault();
-        
-        const formData = new FormData(this);
-        const data = Object.fromEntries(formData);
-        
-        // Validar se pelo menos uma pergunta foi respondida
-        const hasAnswers = Object.keys(data).some(key => key !== 'sugestoes' && data[key]);
-        
-        if (!hasAnswers) {
-            showErrorMessage('Por favor, responda pelo menos uma pergunta do questionário.');
-            return;
+  $("#questionarioForm").submit(function (e) {
+    e.preventDefault();
+
+    const formData = new FormData(this);
+    const data = Object.fromEntries(formData);
+
+    // Validar se pelo menos uma pergunta foi respondida
+    const hasAnswers = Object.keys(data).some(
+      (key) => key !== "sugestoes" && data[key]
+    );
+
+    if (!hasAnswers) {
+      showErrorMessage(
+        "Por favor, responda pelo menos uma pergunta do questionário."
+      );
+      return;
+    }
+
+    // Preparar dados para envio
+    const questionarioData = {
+      funcionario_id: currentUser ? currentUser.id : null,
+      empresa_id: currentUser ? currentUser.empresa_id : null,
+      comunicacao: data.comunicacao || null,
+      ambiente: data.ambiente || null,
+      reconhecimento: data.reconhecimento || null,
+      crescimento: data.crescimento || null,
+      equilibrio: data.equilibrio || null,
+      sugestoes: data.sugestoes || "",
+      anonimo: true,
+    };
+
+    // Chamada AJAX para envio do questionário
+    $.ajax({
+      url: "api/questionario.php",
+      method: "POST",
+      contentType: "application/json",
+      data: JSON.stringify(questionarioData),
+      success: function (response) {
+        if (response.success) {
+          showSuccessMessage(
+            "Questionário enviado com sucesso! Obrigado pela sua participação."
+          );
+          $("#questionarioForm")[0].reset();
+        } else {
+          showErrorMessage(response.error || "Erro ao enviar questionário");
         }
-        
-        // Preparar dados para envio
-        const questionarioData = {
-            funcionario_id: currentUser ? currentUser.id : null,
-            empresa_id: currentUser ? currentUser.empresa_id : null,
-            comunicacao: data.comunicacao || null,
-            ambiente: data.ambiente || null,
-            reconhecimento: data.reconhecimento || null,
-            crescimento: data.crescimento || null,
-            equilibrio: data.equilibrio || null,
-            sugestoes: data.sugestoes || '',
-            anonimo: true
-        };
-        
-        // Chamada AJAX para envio do questionário
-        $.ajax({
-            url: 'api/questionario.php',
-            method: 'POST',
-            contentType: 'application/json',
-            data: JSON.stringify(questionarioData),
-            success: function(response) {
-                if (response.success) {
-                    showSuccessMessage('Questionário enviado com sucesso! Obrigado pela sua participação.');
-                    $('#questionarioForm')[0].reset();
-                } else {
-                    showErrorMessage(response.error || 'Erro ao enviar questionário');
-                }
-            },
-            error: function(xhr) {
-                const response = JSON.parse(xhr.responseText);
-                showErrorMessage(response.error || 'Erro no servidor');
-            }
-        });
+      },
+      error: function (xhr) {
+        const response = JSON.parse(xhr.responseText);
+        showErrorMessage(response.error || "Erro no servidor");
+      },
     });
+  });
 }
 
 // Configurar formulário de feedback
 function setupFeedbackForm() {
-    $('#feedbackForm').submit(function(e) {
-        e.preventDefault();
-        
-        const feedback = $('#feedback').val().trim();
-        
-        if (!feedback) {
-            showErrorMessage('Por favor, escreva seu feedback.');
-            return;
+  $("#feedbackForm").submit(function (e) {
+    e.preventDefault();
+
+    const feedback = $("#feedback").val().trim();
+
+    if (!feedback) {
+      showErrorMessage("Por favor, escreva seu feedback.");
+      return;
+    }
+
+    // Preparar dados para envio
+    const feedbackData = {
+      empresa_id: currentUser ? currentUser.id : null,
+      funcionario_id: currentUser ? currentUser.id : null,
+      feedback: feedback,
+      categoria: "Geral",
+      anonimo: true,
+    };
+
+    // Chamada AJAX para envio do feedback
+    $.ajax({
+      url: "api/feedback.php",
+      method: "POST",
+      contentType: "application/json",
+      data: JSON.stringify(feedbackData),
+      success: function (response) {
+        if (response.success) {
+          showSuccessMessage(
+            "Feedback enviado com sucesso! Obrigado pela sua contribuição."
+          );
+          $("#feedbackForm")[0].reset();
+        } else {
+          showErrorMessage(response.error || "Erro ao enviar feedback");
         }
-        
-        // Preparar dados para envio
-        const feedbackData = {
-            empresa_id: currentUser ? currentUser.id : null,
-            funcionario_id: currentUser ? currentUser.id : null,
-            feedback: feedback,
-            categoria: 'Geral',
-            anonimo: true
-        };
-        
-        // Chamada AJAX para envio do feedback
-        $.ajax({
-            url: 'api/feedback.php',
-            method: 'POST',
-            contentType: 'application/json',
-            data: JSON.stringify(feedbackData),
-            success: function(response) {
-                if (response.success) {
-                    showSuccessMessage('Feedback enviado com sucesso! Obrigado pela sua contribuição.');
-                    $('#feedbackForm')[0].reset();
-                } else {
-                    showErrorMessage(response.error || 'Erro ao enviar feedback');
-                }
-            },
-            error: function(xhr) {
-                const response = JSON.parse(xhr.responseText);
-                showErrorMessage(response.error || 'Erro no servidor');
-            }
-        });
+      },
+      error: function (xhr) {
+        const response = JSON.parse(xhr.responseText);
+        showErrorMessage(response.error || "Erro no servidor");
+      },
     });
+  });
 }
 
 // Funções de navegação
 function scrollToSection(sectionId) {
-    const target = $(sectionId);
-    if (target.length) {
-        $('html, body').animate({
-            scrollTop: target.offset().top - 80
-        }, 800);
-    }
+  const target = $(sectionId);
+  if (target.length) {
+    $("html, body").animate(
+      {
+        scrollTop: target.offset().top - 80,
+      },
+      800
+    );
+  }
 }
 
 // Funções de mensagem
 function showSuccessMessage(message) {
-    showMessage(message, 'success');
+  showMessage(message, "success");
 }
 
 function showErrorMessage(message) {
-    showMessage(message, 'error');
+  showMessage(message, "error");
 }
 
 function showMessage(message, type) {
-    const messageClass = type === 'success' ? 'success-message' : 'error-message';
-    const icon = type === 'success' ? 'fas fa-check-circle' : 'fas fa-exclamation-circle';
-    
-    const messageHTML = `
+  const messageClass = type === "success" ? "success-message" : "error-message";
+  const icon =
+    type === "success" ? "fas fa-check-circle" : "fas fa-exclamation-circle";
+
+  const messageHTML = `
         <div class="message ${messageClass}">
             <i class="${icon}"></i>
             <span>${message}</span>
         </div>
     `;
-    
-    $('body').append(messageHTML);
-    
-    setTimeout(() => {
-        $('.message').fadeOut(300, function() {
-            $(this).remove();
-        });
-    }, 3000);
+
+  $("body").append(messageHTML);
+
+  setTimeout(() => {
+    $(".message").fadeOut(300, function () {
+      $(this).remove();
+    });
+  }, 3000);
 }
 
 // Logout
 function logout() {
-    localStorage.removeItem('userType');
-    localStorage.removeItem('userData');
-    currentUserType = null;
-    currentUser = null;
-    
-    // Recarregar página para resetar o estado
-    location.reload();
+  localStorage.removeItem("userType");
+  localStorage.removeItem("userData");
+  currentUserType = null;
+  currentUser = null;
+
+  // Recarregar página para resetar o estado
+  location.reload();
 }
 
 // Adicionar estilos CSS dinâmicos para mensagens
@@ -916,4 +1117,4 @@ const messageStyles = `
 `;
 
 // Adicionar estilos ao head
-$('head').append(messageStyles);
+$("head").append(messageStyles);
