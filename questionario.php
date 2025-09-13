@@ -1,10 +1,149 @@
 <?php
 /**
  * Página de Questionário - Sistema VERUS
- * Verifica se o usuário está logado como funcionário
+ * Verifica se o usuário está logado como funcionário e processa o questionário
  */
 
 session_start();
+
+// Incluir arquivo de conexão
+require_once 'includes/mysqlconecta.php';
+
+// Processar envio do questionário se for POST
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Iniciar buffer de saída para garantir JSON limpo
+    ob_start();
+    
+    // Desabilitar exibição de erros para não interferir no JSON
+    error_reporting(0);
+    ini_set('display_errors', 0);
+    
+    header('Content-Type: application/json');
+    
+    try {
+        // Obter dados do formulário
+        $funcionarioId = $_POST['funcionario_id'] ?? null;
+        $empresaId = $_POST['empresa_id'] ?? null;
+        $comentario = $_POST['comentario'] ?? '';
+        $opiniao = $_POST['opiniao'] ?? '';
+        $anonimo = $_POST['anonimo'] ?? '1';
+        
+        // Debug: log dos dados recebidos
+        error_log("DEBUG - funcionario_id recebido: " . ($funcionarioId ?? 'NULL'));
+        error_log("DEBUG - anonimo recebido: " . $anonimo);
+        
+        // Definir as 10 questões obrigatórias
+        $questoes = [
+            'ambienteTrabalho' => $_POST['ambienteTrabalho'] ?? null,
+            'lideranca' => $_POST['lideranca'] ?? null,
+            'comunicacao' => $_POST['comunicacao'] ?? null,
+            'crescimento' => $_POST['crescimento'] ?? null,
+            'reconhecimento' => $_POST['reconhecimento'] ?? null,
+            'equilibrio' => $_POST['equilibrio'] ?? null,
+            'beneficios' => $_POST['beneficios'] ?? null,
+            'relacionamento' => $_POST['relacionamento'] ?? null,
+            'estrutura' => $_POST['estrutura'] ?? null,
+            'climaOrganizacional' => $_POST['climaOrganizacional'] ?? null
+        ];
+        
+        // Validar todas as questões
+        foreach ($questoes as $questao => $valor) {
+            if (!$valor) {
+                throw new Exception("É necessário responder a pergunta: " . ucfirst($questao));
+            }
+            
+            // Validar valor (1-5)
+            if (!is_numeric($valor) || $valor < 1 || $valor > 5) {
+                throw new Exception("Valor inválido para {$questao}. Deve ser entre 1 e 5.");
+            }
+        }
+        
+        // Preparar dados para inserção
+        $funcionarioIdValue = null;
+        $anonimoValue = ($anonimo == '1') ? 1 : 0;
+        $sugestoes = trim($comentario . "\n\n" . $opiniao);
+        
+        // Se NÃO for anônimo, usar o ID do funcionário logado
+        if ($anonimo != '1' && $funcionarioId) {
+            error_log("DEBUG - Tentando salvar com funcionario_id: " . $funcionarioId);
+            // Verificar se o funcionário existe na base de dados
+            $sqlCheck = "SELECT id FROM funcionarios WHERE id = ?";
+            $stmtCheck = mysqli_prepare($conexao, $sqlCheck);
+            if ($stmtCheck) {
+                mysqli_stmt_bind_param($stmtCheck, 'i', $funcionarioId);
+                mysqli_stmt_execute($stmtCheck);
+                $result = mysqli_stmt_get_result($stmtCheck);
+                if (mysqli_num_rows($result) > 0) {
+                    $funcionarioIdValue = $funcionarioId; // Salvar com ID do funcionário
+                    error_log("DEBUG - Funcionário encontrado, salvando com ID: " . $funcionarioIdValue);
+                } else {
+                    // Se funcionário não existir, salvar como anônimo
+                    $funcionarioIdValue = null;
+                    $anonimoValue = 1;
+                    error_log("DEBUG - Funcionário não encontrado, salvando como anônimo");
+                }
+                mysqli_stmt_close($stmtCheck);
+            }
+        } else {
+            error_log("DEBUG - Salvando como anônimo (anonimo=" . $anonimo . ", funcionario_id=" . ($funcionarioId ?? 'NULL') . ")");
+        }
+        // Se for anônimo ($anonimo == '1'), $funcionarioIdValue permanece NULL
+        
+        // Query SQL para inserir questionário (usando colunas existentes)
+        $sql = "INSERT INTO questionarios (
+            funcionario_id, empresa_id, satisfacaoGeral, comunicacao, ambiente, 
+            reconhecimento, crescimento, equilibrio, sugestoes, data_envio
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())";
+        
+        $stmt = mysqli_prepare($conexao, $sql);
+        if (!$stmt) {
+            throw new Exception('Erro ao preparar statement: ' . mysqli_error($conexao));
+        }
+        
+        // Mapear as questões para as colunas existentes
+        $satisfacaoGeral = $questoes['climaOrganizacional']; // Usar clima organizacional como satisfação geral
+        $comunicacao = $questoes['comunicacao'];
+        $ambiente = $questoes['ambienteTrabalho'];
+        $reconhecimento = $questoes['reconhecimento'];
+        $crescimento = $questoes['crescimento'];
+        $equilibrio = $questoes['equilibrio'];
+        
+        error_log("DEBUG - Valores finais: funcionario_id=" . ($funcionarioIdValue ?? 'NULL') . ", anonimo=" . $anonimoValue);
+        
+        mysqli_stmt_bind_param($stmt, 'iiiiiiiis', 
+            $funcionarioIdValue, $empresaId, $satisfacaoGeral, 
+            $comunicacao, $ambiente, $reconhecimento, $crescimento, $equilibrio, $sugestoes
+        );
+        
+        if (!mysqli_stmt_execute($stmt)) {
+            throw new Exception('Erro ao executar statement: ' . mysqli_stmt_error($stmt));
+        }
+        
+        $questionarioId = mysqli_insert_id($conexao);
+        mysqli_stmt_close($stmt);
+        
+        // Limpar buffer e retornar sucesso
+        ob_clean();
+        echo json_encode([
+            'success' => true,
+            'message' => 'Questionário enviado com sucesso! Obrigado pela sua participação.',
+            'questionario_id' => $questionarioId
+        ]);
+        
+    } catch (Exception $e) {
+        // Garantir que apenas JSON seja retornado
+        if (headers_sent()) {
+            ob_clean();
+        }
+        
+        http_response_code(400);
+        echo json_encode([
+            'success' => false,
+            'error' => $e->getMessage()
+        ]);
+    }
+    exit;
+}
 
 // Verificar se o usuário está logado como funcionário
 $userData = null;
@@ -201,6 +340,60 @@ if (isset($_SESSION['userData'])) {
             line-height: 1.6;
         }
 
+        .anonymity-section {
+            background: #f8f9fa;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .anonymity-checkbox {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            font-size: 1.1em;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .anonymity-checkbox input[type="checkbox"] {
+            display: none;
+        }
+
+        .checkmark {
+            width: 20px;
+            height: 20px;
+            background: white;
+            border: 2px solid #87CEEB;
+            border-radius: 4px;
+            margin-right: 10px;
+            position: relative;
+            transition: all 0.3s;
+        }
+
+        .anonymity-checkbox input[type="checkbox"]:checked + .checkmark {
+            background: #87CEEB;
+        }
+
+        .anonymity-checkbox input[type="checkbox"]:checked + .checkmark::after {
+            content: '✓';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-weight: bold;
+        }
+
+        .anonymity-description {
+            color: #666;
+            font-size: 0.9em;
+            margin: 0;
+            font-style: italic;
+        }
+
         .back-button {
             position: fixed;
             top: 20px;
@@ -272,7 +465,7 @@ if (isset($_SESSION['userData'])) {
 
     <div class="questionario-container">
         <div class="questionario-header">
-            <h1 class="questionario-title">Questionário:</h1>
+            <h1 class="questionario-title">Questionário de Clima Organizacional</h1>
             <p class="questionario-intro">
                 Sua participação na pesquisa é essencial para entendermos o clima organizacional atual e identificar áreas que precisam ser melhoradas. Com essas informações, poderemos criar um ambiente de trabalho mais saudável, motivador e produtivo para todos.
             </p>
@@ -280,36 +473,305 @@ if (isset($_SESSION['userData'])) {
 
         <div class="divider"></div>
 
-        <form id="questionarioForm" method="POST" action="processar_questionario.php">
+        <form id="questionarioForm">
+            <!-- Seção de Anonimato -->
             <div class="question-section">
-                <h2 class="question-title">Satisfação Geral: (Pergunta Fechada):</h2>
+                <div class="anonymity-section">
+                    <label class="anonymity-checkbox">
+                        <input type="checkbox" id="responderAnonimamente" name="responderAnonimamente">
+                        <span class="checkmark"></span>
+                        <span class="anonymity-text">Responder anonimamente</span>
+                    </label>
+                    <p class="anonymity-description">
+                        Ao marcar esta opção, suas respostas serão registradas sem identificação pessoal.
+                    </p>
+                </div>
+            </div>
+
+            <div class="divider"></div>
+
+            <!-- Questão 1: Ambiente de Trabalho -->
+            <div class="question-section">
+                <h2 class="question-title">1. Como você avalia o ambiente de trabalho em sua área?</h2>
                 <div class="satisfaction-scale">
-                    <div class="satisfaction-option" data-value="1">
+                    <div class="satisfaction-option" data-value="1" data-question="ambienteTrabalho">
                         <div class="satisfaction-emoji">😠</div>
                         <div class="satisfaction-label">Muito insatisfeito</div>
                     </div>
-                    <div class="satisfaction-option" data-value="2">
+                    <div class="satisfaction-option" data-value="2" data-question="ambienteTrabalho">
                         <div class="satisfaction-emoji">😞</div>
                         <div class="satisfaction-label">Insatisfeito</div>
                     </div>
-                    <div class="satisfaction-option" data-value="3">
+                    <div class="satisfaction-option" data-value="3" data-question="ambienteTrabalho">
                         <div class="satisfaction-emoji">😐</div>
                         <div class="satisfaction-label">Neutro</div>
                     </div>
-                    <div class="satisfaction-option" data-value="4">
+                    <div class="satisfaction-option" data-value="4" data-question="ambienteTrabalho">
                         <div class="satisfaction-emoji">😊</div>
                         <div class="satisfaction-label">Satisfeito</div>
                     </div>
-                    <div class="satisfaction-option" data-value="5">
+                    <div class="satisfaction-option" data-value="5" data-question="ambienteTrabalho">
                         <div class="satisfaction-emoji">😄</div>
                         <div class="satisfaction-label">Muito satisfeito</div>
                     </div>
                 </div>
-                <input type="hidden" id="satisfacaoGeral" name="satisfacaoGeral" value="" required>
+                <input type="hidden" id="ambienteTrabalho" name="ambienteTrabalho" value="" required>
+            </div>
+
+            <!-- Questão 2: Liderança -->
+            <div class="question-section">
+                <h2 class="question-title">2. Como você avalia a liderança e gestão em sua área?</h2>
+                <div class="satisfaction-scale">
+                    <div class="satisfaction-option" data-value="1" data-question="lideranca">
+                        <div class="satisfaction-emoji">😠</div>
+                        <div class="satisfaction-label">Muito insatisfeito</div>
+                    </div>
+                    <div class="satisfaction-option" data-value="2" data-question="lideranca">
+                        <div class="satisfaction-emoji">😞</div>
+                        <div class="satisfaction-label">Insatisfeito</div>
+                    </div>
+                    <div class="satisfaction-option" data-value="3" data-question="lideranca">
+                        <div class="satisfaction-emoji">😐</div>
+                        <div class="satisfaction-label">Neutro</div>
+                    </div>
+                    <div class="satisfaction-option" data-value="4" data-question="lideranca">
+                        <div class="satisfaction-emoji">😊</div>
+                        <div class="satisfaction-label">Satisfeito</div>
+                    </div>
+                    <div class="satisfaction-option" data-value="5" data-question="lideranca">
+                        <div class="satisfaction-emoji">😄</div>
+                        <div class="satisfaction-label">Muito satisfeito</div>
+                    </div>
+                </div>
+                <input type="hidden" id="lideranca" name="lideranca" value="" required>
+            </div>
+
+            <!-- Questão 3: Comunicação -->
+            <div class="question-section">
+                <h2 class="question-title">3. Como você avalia a comunicação interna da empresa?</h2>
+                <div class="satisfaction-scale">
+                    <div class="satisfaction-option" data-value="1" data-question="comunicacao">
+                        <div class="satisfaction-emoji">😠</div>
+                        <div class="satisfaction-label">Muito insatisfeito</div>
+                    </div>
+                    <div class="satisfaction-option" data-value="2" data-question="comunicacao">
+                        <div class="satisfaction-emoji">😞</div>
+                        <div class="satisfaction-label">Insatisfeito</div>
+                    </div>
+                    <div class="satisfaction-option" data-value="3" data-question="comunicacao">
+                        <div class="satisfaction-emoji">😐</div>
+                        <div class="satisfaction-label">Neutro</div>
+                    </div>
+                    <div class="satisfaction-option" data-value="4" data-question="comunicacao">
+                        <div class="satisfaction-emoji">😊</div>
+                        <div class="satisfaction-label">Satisfeito</div>
+                    </div>
+                    <div class="satisfaction-option" data-value="5" data-question="comunicacao">
+                        <div class="satisfaction-emoji">😄</div>
+                        <div class="satisfaction-label">Muito satisfeito</div>
+                    </div>
+                </div>
+                <input type="hidden" id="comunicacao" name="comunicacao" value="" required>
+            </div>
+
+            <!-- Questão 4: Oportunidades de Crescimento -->
+            <div class="question-section">
+                <h2 class="question-title">4. Como você avalia as oportunidades de crescimento profissional?</h2>
+                <div class="satisfaction-scale">
+                    <div class="satisfaction-option" data-value="1" data-question="crescimento">
+                        <div class="satisfaction-emoji">😠</div>
+                        <div class="satisfaction-label">Muito insatisfeito</div>
+                    </div>
+                    <div class="satisfaction-option" data-value="2" data-question="crescimento">
+                        <div class="satisfaction-emoji">😞</div>
+                        <div class="satisfaction-label">Insatisfeito</div>
+                    </div>
+                    <div class="satisfaction-option" data-value="3" data-question="crescimento">
+                        <div class="satisfaction-emoji">😐</div>
+                        <div class="satisfaction-label">Neutro</div>
+                    </div>
+                    <div class="satisfaction-option" data-value="4" data-question="crescimento">
+                        <div class="satisfaction-emoji">😊</div>
+                        <div class="satisfaction-label">Satisfeito</div>
+                    </div>
+                    <div class="satisfaction-option" data-value="5" data-question="crescimento">
+                        <div class="satisfaction-emoji">😄</div>
+                        <div class="satisfaction-label">Muito satisfeito</div>
+                    </div>
+                </div>
+                <input type="hidden" id="crescimento" name="crescimento" value="" required>
+            </div>
+
+            <!-- Questão 5: Reconhecimento -->
+            <div class="question-section">
+                <h2 class="question-title">5. Como você avalia o reconhecimento e valorização dos funcionários?</h2>
+                <div class="satisfaction-scale">
+                    <div class="satisfaction-option" data-value="1" data-question="reconhecimento">
+                        <div class="satisfaction-emoji">😠</div>
+                        <div class="satisfaction-label">Muito insatisfeito</div>
+                    </div>
+                    <div class="satisfaction-option" data-value="2" data-question="reconhecimento">
+                        <div class="satisfaction-emoji">😞</div>
+                        <div class="satisfaction-label">Insatisfeito</div>
+                    </div>
+                    <div class="satisfaction-option" data-value="3" data-question="reconhecimento">
+                        <div class="satisfaction-emoji">😐</div>
+                        <div class="satisfaction-label">Neutro</div>
+                    </div>
+                    <div class="satisfaction-option" data-value="4" data-question="reconhecimento">
+                        <div class="satisfaction-emoji">😊</div>
+                        <div class="satisfaction-label">Satisfeito</div>
+                    </div>
+                    <div class="satisfaction-option" data-value="5" data-question="reconhecimento">
+                        <div class="satisfaction-emoji">😄</div>
+                        <div class="satisfaction-label">Muito satisfeito</div>
+                    </div>
+                </div>
+                <input type="hidden" id="reconhecimento" name="reconhecimento" value="" required>
+            </div>
+
+            <!-- Questão 6: Equilíbrio Vida Pessoal/Profissional -->
+            <div class="question-section">
+                <h2 class="question-title">6. Como você avalia o equilíbrio entre vida pessoal e profissional?</h2>
+                <div class="satisfaction-scale">
+                    <div class="satisfaction-option" data-value="1" data-question="equilibrio">
+                        <div class="satisfaction-emoji">😠</div>
+                        <div class="satisfaction-label">Muito insatisfeito</div>
+                    </div>
+                    <div class="satisfaction-option" data-value="2" data-question="equilibrio">
+                        <div class="satisfaction-emoji">😞</div>
+                        <div class="satisfaction-label">Insatisfeito</div>
+                    </div>
+                    <div class="satisfaction-option" data-value="3" data-question="equilibrio">
+                        <div class="satisfaction-emoji">😐</div>
+                        <div class="satisfaction-label">Neutro</div>
+                    </div>
+                    <div class="satisfaction-option" data-value="4" data-question="equilibrio">
+                        <div class="satisfaction-emoji">😊</div>
+                        <div class="satisfaction-label">Satisfeito</div>
+                    </div>
+                    <div class="satisfaction-option" data-value="5" data-question="equilibrio">
+                        <div class="satisfaction-emoji">😄</div>
+                        <div class="satisfaction-label">Muito satisfeito</div>
+                    </div>
+                </div>
+                <input type="hidden" id="equilibrio" name="equilibrio" value="" required>
+            </div>
+
+            <!-- Questão 7: Benefícios -->
+            <div class="question-section">
+                <h2 class="question-title">7. Como você avalia os benefícios oferecidos pela empresa?</h2>
+                <div class="satisfaction-scale">
+                    <div class="satisfaction-option" data-value="1" data-question="beneficios">
+                        <div class="satisfaction-emoji">😠</div>
+                        <div class="satisfaction-label">Muito insatisfeito</div>
+                    </div>
+                    <div class="satisfaction-option" data-value="2" data-question="beneficios">
+                        <div class="satisfaction-emoji">😞</div>
+                        <div class="satisfaction-label">Insatisfeito</div>
+                    </div>
+                    <div class="satisfaction-option" data-value="3" data-question="beneficios">
+                        <div class="satisfaction-emoji">😐</div>
+                        <div class="satisfaction-label">Neutro</div>
+                    </div>
+                    <div class="satisfaction-option" data-value="4" data-question="beneficios">
+                        <div class="satisfaction-emoji">😊</div>
+                        <div class="satisfaction-label">Satisfeito</div>
+                    </div>
+                    <div class="satisfaction-option" data-value="5" data-question="beneficios">
+                        <div class="satisfaction-emoji">😄</div>
+                        <div class="satisfaction-label">Muito satisfeito</div>
+                    </div>
+                </div>
+                <input type="hidden" id="beneficios" name="beneficios" value="" required>
+            </div>
+
+            <!-- Questão 8: Relacionamento com Colegas -->
+            <div class="question-section">
+                <h2 class="question-title">8. Como você avalia o relacionamento com seus colegas de trabalho?</h2>
+                <div class="satisfaction-scale">
+                    <div class="satisfaction-option" data-value="1" data-question="relacionamento">
+                        <div class="satisfaction-emoji">😠</div>
+                        <div class="satisfaction-label">Muito insatisfeito</div>
+                    </div>
+                    <div class="satisfaction-option" data-value="2" data-question="relacionamento">
+                        <div class="satisfaction-emoji">😞</div>
+                        <div class="satisfaction-label">Insatisfeito</div>
+                    </div>
+                    <div class="satisfaction-option" data-value="3" data-question="relacionamento">
+                        <div class="satisfaction-emoji">😐</div>
+                        <div class="satisfaction-label">Neutro</div>
+                    </div>
+                    <div class="satisfaction-option" data-value="4" data-question="relacionamento">
+                        <div class="satisfaction-emoji">😊</div>
+                        <div class="satisfaction-label">Satisfeito</div>
+                    </div>
+                    <div class="satisfaction-option" data-value="5" data-question="relacionamento">
+                        <div class="satisfaction-emoji">😄</div>
+                        <div class="satisfaction-label">Muito satisfeito</div>
+                    </div>
+                </div>
+                <input type="hidden" id="relacionamento" name="relacionamento" value="" required>
+            </div>
+
+            <!-- Questão 9: Estrutura e Processos -->
+            <div class="question-section">
+                <h2 class="question-title">9. Como você avalia a estrutura e processos organizacionais?</h2>
+                <div class="satisfaction-scale">
+                    <div class="satisfaction-option" data-value="1" data-question="estrutura">
+                        <div class="satisfaction-emoji">😠</div>
+                        <div class="satisfaction-label">Muito insatisfeito</div>
+                    </div>
+                    <div class="satisfaction-option" data-value="2" data-question="estrutura">
+                        <div class="satisfaction-emoji">😞</div>
+                        <div class="satisfaction-label">Insatisfeito</div>
+                    </div>
+                    <div class="satisfaction-option" data-value="3" data-question="estrutura">
+                        <div class="satisfaction-emoji">😐</div>
+                        <div class="satisfaction-label">Neutro</div>
+                    </div>
+                    <div class="satisfaction-option" data-value="4" data-question="estrutura">
+                        <div class="satisfaction-emoji">😊</div>
+                        <div class="satisfaction-label">Satisfeito</div>
+                    </div>
+                    <div class="satisfaction-option" data-value="5" data-question="estrutura">
+                        <div class="satisfaction-emoji">😄</div>
+                        <div class="satisfaction-label">Muito satisfeito</div>
+                    </div>
+                </div>
+                <input type="hidden" id="estrutura" name="estrutura" value="" required>
+            </div>
+
+            <!-- Questão 10: Clima Organizacional Geral -->
+            <div class="question-section">
+                <h2 class="question-title">10. Como você avalia o clima organizacional geral da empresa?</h2>
+                <div class="satisfaction-scale">
+                    <div class="satisfaction-option" data-value="1" data-question="climaOrganizacional">
+                        <div class="satisfaction-emoji">😠</div>
+                        <div class="satisfaction-label">Muito insatisfeito</div>
+                    </div>
+                    <div class="satisfaction-option" data-value="2" data-question="climaOrganizacional">
+                        <div class="satisfaction-emoji">😞</div>
+                        <div class="satisfaction-label">Insatisfeito</div>
+                    </div>
+                    <div class="satisfaction-option" data-value="3" data-question="climaOrganizacional">
+                        <div class="satisfaction-emoji">😐</div>
+                        <div class="satisfaction-label">Neutro</div>
+                    </div>
+                    <div class="satisfaction-option" data-value="4" data-question="climaOrganizacional">
+                        <div class="satisfaction-emoji">😊</div>
+                        <div class="satisfaction-label">Satisfeito</div>
+                    </div>
+                    <div class="satisfaction-option" data-value="5" data-question="climaOrganizacional">
+                        <div class="satisfaction-emoji">😄</div>
+                        <div class="satisfaction-label">Muito satisfeito</div>
+                    </div>
+                </div>
+                <input type="hidden" id="climaOrganizacional" name="climaOrganizacional" value="" required>
             </div>
 
             <div class="comment-section">
-                <label class="comment-label" for="comentario">Fazer comentário:</label>
+                <label class="comment-label" for="comentario">Comentários adicionais:</label>
                 <textarea 
                     id="comentario" 
                     name="comentario" 
@@ -319,7 +781,7 @@ if (isset($_SESSION['userData'])) {
             </div>
 
             <div class="comment-section">
-                <h2 class="question-title">Expresse sua opinião (Pergunta Aberta):</h2>
+                <h2 class="question-title">Sugestões e Observações:</h2>
                 <textarea 
                     id="opiniao" 
                     name="opiniao" 
@@ -329,7 +791,7 @@ if (isset($_SESSION['userData'])) {
             </div>
 
             <button type="submit" class="submit-button">
-                <i class="fas fa-paper-plane"></i> Enviar Respostas
+                <i class="fas fa-paper-plane"></i> Enviar Questionário
             </button>
         </form>
 
@@ -356,139 +818,101 @@ if (isset($_SESSION['userData'])) {
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
         $(document).ready(function() {
-            let selectedSatisfaction = null;
+            let selectedSatisfactions = {};
 
-            // Seleção de satisfação
+            // Seleção de satisfação para todas as perguntas
             $('.satisfaction-option').click(function() {
-                $('.satisfaction-option').removeClass('selected');
-                $(this).addClass('selected');
-                selectedSatisfaction = $(this).data('value');
-                $('#satisfacaoGeral').val(selectedSatisfaction);
+                const questionId = $(this).data('question');
+                const value = $(this).data('value');
                 
-                // Debug: mostrar valor selecionado
-                console.log('Satisfação selecionada:', selectedSatisfaction);
-                console.log('Valor do campo hidden:', $('#satisfacaoGeral').val());
+                // Remover seleção anterior da mesma pergunta
+                $(`.satisfaction-option[data-question="${questionId}"]`).removeClass('selected');
+                // Adicionar seleção atual
+                $(this).addClass('selected');
+                
+                // Armazenar valor selecionado
+                selectedSatisfactions[questionId] = value;
+                $(`#${questionId}`).val(value);
+                
+                console.log(`Pergunta ${questionId} selecionada:`, value);
             });
 
             // Envio do formulário
             $('#questionarioForm').submit(function(e) {
                 e.preventDefault();
 
-                // Validação melhorada
-                console.log('Validação - selectedSatisfaction:', selectedSatisfaction);
-                console.log('Validação - campo hidden:', $('#satisfacaoGeral').val());
+                // Validação de todas as perguntas
+                const requiredQuestions = ['ambienteTrabalho', 'lideranca', 'comunicacao', 'crescimento', 'reconhecimento', 'equilibrio', 'beneficios', 'relacionamento', 'estrutura', 'climaOrganizacional'];
+                const missingQuestions = [];
                 
-                if (!selectedSatisfaction || selectedSatisfaction === null || selectedSatisfaction === '') {
-                    alert('Por favor, selecione um nível de satisfação.');
-                    return;
-                }
+                requiredQuestions.forEach(questionId => {
+                    if (!selectedSatisfactions[questionId] || selectedSatisfactions[questionId] === null || selectedSatisfactions[questionId] === '') {
+                        missingQuestions.push(questionId);
+                    } else {
+                        // Verificar se o valor é numérico
+                        const value = parseInt(selectedSatisfactions[questionId]);
+                        if (isNaN(value) || value < 1 || value > 5) {
+                            missingQuestions.push(questionId);
+                        }
+                    }
+                });
                 
-                // Verificar se o valor é numérico
-                if (isNaN(selectedSatisfaction) || selectedSatisfaction < 1 || selectedSatisfaction > 5) {
-                    alert('Valor de satisfação inválido. Deve ser entre 1 e 5.');
-                    return;
-                }
-                
-                // Garantir que selectedSatisfaction seja um número
-                selectedSatisfaction = parseInt(selectedSatisfaction);
-                
-                // Validação final
-                if (selectedSatisfaction < 1 || selectedSatisfaction > 5) {
-                    alert('Valor de satisfação inválido. Deve ser entre 1 e 5.');
+                if (missingQuestions.length > 0) {
+                    alert('Por favor, responda todas as perguntas antes de enviar o questionário.');
                     return;
                 }
 
                 // Obter dados do usuário logado
                 const userData = JSON.parse(localStorage.getItem('userData') || '{}');
                 
-                // Criar FormData para envio
-                const formData = new FormData();
+                // Debug: verificar dados do usuário
+                console.log('DEBUG - userData:', userData);
+                console.log('DEBUG - userData.id:', userData.id);
+                console.log('DEBUG - userData.tipo:', userData.tipo);
                 
-                // Garantir que o campo hidden tenha o valor correto
-                $('#satisfacaoGeral').val(selectedSatisfaction);
+                // Verificar se é resposta anônima
+                const isAnonymous = $('#responderAnonimamente').is(':checked');
+                console.log('DEBUG - isAnonymous:', isAnonymous);
                 
-                // Converter para string para garantir compatibilidade
-                formData.append('satisfacaoGeral', String(selectedSatisfaction));
-                formData.append('comentario', String($('#comentario').val() || ''));
-                formData.append('opiniao', String($('#opiniao').val() || ''));
-                formData.append('anonimo', '1');
+                // Preparar dados para envio
+                const questionarioData = {
+                    funcionario_id: isAnonymous ? null : userData.id,
+                    empresa_id: userData.empresa_id || 2,
+                    anonimo: isAnonymous ? '1' : '0',
+                    comentario: $('#comentario').val() || '',
+                    opiniao: $('#opiniao').val() || ''
+                };
                 
-                // Sempre incluir empresa_id (usar ID 2 que é a empresa existente)
-                const empresaId = userData.empresa_id || 2;
-                formData.append('empresa_id', String(empresaId));
+                // Adicionar todas as respostas de satisfação
+                requiredQuestions.forEach(questionId => {
+                    questionarioData[questionId] = parseInt(selectedSatisfactions[questionId]);
+                });
                 
-                if (userData.id) {
-                    formData.append('funcionario_id', String(userData.id));
-                }
-
-                // Debug: mostrar dados sendo enviados
-                console.log('=== DADOS SENDO ENVIADOS ===');
-                console.log('satisfacaoGeral:', selectedSatisfaction, 'tipo:', typeof selectedSatisfaction);
-                console.log('comentario:', $('#comentario').val());
-                console.log('opiniao:', $('#opiniao').val());
-                console.log('funcionario_id:', userData.id || 'não informado');
-                console.log('empresa_id:', empresaId);
-                console.log('anonimo:', '1');
+                console.log('Dados sendo enviados:', questionarioData);
                 
-                // Verificar se o FormData está correto
-                console.log('=== VERIFICAÇÃO FORMDATA ===');
-                for (let [key, value] of formData.entries()) {
-                    console.log(key + ':', value, 'tipo:', typeof value);
-                }
-                
-                // Verificar se todos os campos obrigatórios estão presentes
-                console.log('=== VALIDAÇÃO FINAL ===');
-                console.log('satisfacaoGeral presente:', formData.has('satisfacaoGeral'));
-                console.log('empresa_id presente:', formData.has('empresa_id'));
-                console.log('anonimo presente:', formData.has('anonimo'));
-                
-                // Enviar via AJAX
+                // Enviar via AJAX para processamento direto
                 $.ajax({
-                    url: 'processar_questionario.php',
+                    url: 'questionario.php',
                     method: 'POST',
-                    data: formData,
-                    processData: false,
-                    contentType: false,
+                    data: questionarioData,
                     dataType: 'json',
                     timeout: 10000,
                     success: function(response) {
-                        console.log('=== RESPOSTA RECEBIDA ===');
-                        console.log('Resposta bruta:', response);
-                        console.log('Tipo da resposta:', typeof response);
+                        console.log('Resposta recebida:', response);
                         
-                        try {
-                            // Se a resposta já for um objeto, usar diretamente
-                            let result;
-                            if (typeof response === 'object') {
-                                result = response;
-                            } else {
-                                // Se for string, tentar fazer parse
-                                result = JSON.parse(response);
-                            }
-                            
-                            console.log('Resultado processado:', result);
-                            
-                            if (result.success) {
+                        if (response.success) {
                                 $('#successMessage').fadeIn(300);
                                 // Limpar formulário
                                 $('#questionarioForm')[0].reset();
                                 $('.satisfaction-option').removeClass('selected');
-                                selectedSatisfaction = null;
+                            selectedSatisfactions = {};
                             } else {
-                                alert('Erro ao enviar questionário: ' + result.error);
-                            }
-                        } catch (e) {
-                            console.error('Erro ao processar resposta:', e);
-                            console.error('Resposta que causou erro:', response);
-                            alert('Erro ao processar resposta do servidor. Verifique o console.');
+                            alert('Erro ao enviar questionário: ' + response.error);
                         }
                     },
                     error: function(xhr, status, error) {
-                        console.error('=== ERRO AJAX ===');
-                        console.error('Status:', status);
-                        console.error('Error:', error);
+                        console.error('Erro AJAX:', error);
                         console.error('Response Text:', xhr.responseText);
-                        console.error('Status Code:', xhr.status);
                         
                         try {
                             const errorResponse = JSON.parse(xhr.responseText);
