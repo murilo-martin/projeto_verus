@@ -35,12 +35,6 @@
                     </div>
                     <div class="offcanvas-body">
                         <ul class="navbar-nav d-flex flex-column gap-3">
-                            <a class="nav-text" onclick="showModals('funcionario')">
-                                <li class="nav-item">Login funcionario</li>
-                            </a>
-                            <a class="nav-text" onclick="showModals('empresa')">
-                                <li class="nav-item">Login Empresa</li>
-                            </a>
                             <a class="nav-text">
                                 <li class="nav-item">Categorias de Feedback</li>
                             </a>

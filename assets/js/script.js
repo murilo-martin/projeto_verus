@@ -404,9 +404,9 @@ function setupFuncionarioLoginForm(type) {
       success: function (response) {
         
         if(response == 'sucesso'){
-          // Salvar dados do usuário no localStorage
+
           const userData = {
-            id: email, // Usando email como ID temporário
+            id: email, 
             email: email,
             tipo: 'funcionario'
           };
@@ -499,34 +499,51 @@ function setupEmpresaLoginForm(type) {
       return;
     }
 
-    // Chamada AJAX para login
+    console.log(senha)
     $.ajax({
       url: "api/login.php",
       method: "POST",
-      data: {
+      data:{
         tipo: "empresa",
         cnpj: cnpj,
         senha: senha,
       },
       success: function (response) {
-       
+
+        console.log(response)
+    if(response == 'sucesso'){
+          
+          const userData = {
+            id: cnpj, 
+            cnpj: cnpj,
+            tipo: 'empresa'
+          };
+          localStorage.setItem('userData', JSON.stringify(userData));
+          localStorage.setItem('userType', 'empresa');
+          
           closeLoginModal();
           showSuccessMessage(
-            "Login realizado com sucesso! Redirecionando para os relatórios..."
+            "Login realizado com sucesso! Redirecionando para o questionário..."
           );
-
-          // Redirecionar para a página de relatórios após 1 segundo
+          
+          // Redirecionar para a página do questionário após 1 segundo
           setTimeout(function () {
             window.location.href = "relatorios.php";
           }, 1000);
-      },
-      error: function (xhr) {
-        const response = JSON.parse(xhr.responseText);
-        showErrorMessage(response.error || "Erro no servidor");
-      },
+
+        }else if(response == 'erro'){
+
+            showErrorMessage("CNPJ não cadastrado");
+
+        }else{
+
+            showErrorMessage("Senha errada");
+        }
+      }
     });
-  });
-    }else{
+
+    });
+  }else{
 
 $("#empresaLoginForm").submit(function (e) {
     e.preventDefault();
@@ -565,193 +582,6 @@ $("#empresaLoginForm").submit(function (e) {
 
 }
 }
-//Masks
-
-// Atualizar seção do questionário
-function updateQuestionarioSection() {
-  const questionarioHTML = `
-        <div class="questionario-content">
-            <div class="questionario-intro">
-                <h3>Pesquisa de Clima Organizacional</h3>
-                <p>Sua participação na pesquisa é essencial para entendermos o clima organizacional atual e identificar áreas que precisam ser melhoradas. Com essas informações, poderemos criar um ambiente de trabalho mais saudável, motivador e produtivo para todos.</p>
-                
-                <div class="anonymity-notice">
-                    <i class="fas fa-shield-alt"></i>
-                    <h4>Anonimato Garantido</h4>
-                    <p>Sua participação é totalmente anônima. As informações coletadas serão tratadas com confidencialidade e utilizadas apenas para análise do clima organizacional.</p>
-                </div>
-            </div>
-            
-            <form id="questionarioForm" class="questionario-form">
-                <div class="question-group">
-                    <h4>1. Como você avalia a comunicação interna na empresa?</h4>
-                    <div class="rating-scale">
-                        <label><input type="radio" name="comunicacao" value="1"> 1 - Muito insatisfeito</label>
-                        <label><input type="radio" name="comunicacao" value="2"> 2 - Insatisfeito</label>
-                        <label><input type="radio" name="comunicacao" value="3"> 3 - Neutro</label>
-                        <label><input type="radio" name="comunicacao" value="4"> 4 - Satisfeito</label>
-                        <label><input type="radio" name="comunicacao" value="5"> 5 - Muito satisfeito</label>
-                    </div>
-                </div>
-                
-                <div class="question-group">
-                    <h4>2. Como você avalia o ambiente de trabalho?</h4>
-                    <div class="rating-scale">
-                        <label><input type="radio" name="ambiente" value="1"> 1 - Muito insatisfeito</label>
-                        <label><input type="radio" name="ambiente" value="2"> 2 - Insatisfeito</label>
-                        <label><input type="radio" name="ambiente" value="3"> 3 - Neutro</label>
-                        <label><input type="radio" name="ambiente" value="4"> 4 - Satisfeito</label>
-                        <label><input type="radio" name="ambiente" value="5"> 5 - Muito satisfeito</label>
-                    </div>
-                </div>
-                
-                <div class="question-group">
-                    <h4>3. Como você avalia o reconhecimento pelo trabalho realizado?</h4>
-                    <div class="rating-scale">
-                        <label><input type="radio" name="reconhecimento" value="1"> 1 - Muito insatisfeito</label>
-                        <label><input type="radio" name="reconhecimento" value="2"> 2 - Insatisfeito</label>
-                        <label><input type="radio" name="reconhecimento" value="3"> 3 - Neutro</label>
-                        <label><input type="radio" name="reconhecimento" value="4"> 4 - Satisfeito</label>
-                        <label><input type="radio" name="reconhecimento" value="5"> 5 - Muito satisfeito</label>
-                    </div>
-                </div>
-                
-                <div class="question-group">
-                    <h4>4. Como você avalia as oportunidades de crescimento na empresa?</h4>
-                    <div class="rating-scale">
-                        <label><input type="radio" name="crescimento" value="1"> 1 - Muito insatisfeito</label>
-                        <label><input type="radio" name="crescimento" value="2"> 2 - Insatisfeito</label>
-                        <label><input type="radio" name="crescimento" value="3"> 3 - Neutro</label>
-                        <label><input type="radio" name="crescimento" value="4"> 4 - Satisfeito</label>
-                        <label><input type="radio" name="crescimento" value="5"> 5 - Muito satisfeito</label>
-                    </div>
-                </div>
-                
-                <div class="question-group">
-                    <h4>5. Como você avalia o equilíbrio entre trabalho e vida pessoal?</h4>
-                    <div class="rating-scale">
-                        <label><input type="radio" name="equilibrio" value="1"> 1 - Muito insatisfeito</label>
-                        <label><input type="radio" name="equilibrio" value="2"> 2 - Insatisfeito</label>
-                        <label><input type="radio" name="equilibrio" value="3"> 3 - Neutro</label>
-                        <label><input type="radio" name="equilibrio" value="4"> 4 - Satisfeito</label>
-                        <label><input type="radio" name="equilibrio" value="5"> 5 - Muito satisfeito</label>
-                    </div>
-                </div>
-                
-                <div class="question-group">
-                    <h4>6. Sugestões e Comentários</h4>
-                    <textarea name="sugestoes" placeholder="Compartilhe suas sugestões, críticas construtivas ou observações sobre o clima organizacional da empresa..." rows="5"></textarea>
-                </div>
-                
-                <div class="form-actions">
-                    <button type="submit" class="btn-primary">
-                        <i class="fas fa-paper-plane"></i> Enviar Questionário
-                    </button>
-                </div>
-            </form>
-        </div>
-    `;
-
-  $(".questionario-container").html(questionarioHTML);
-  setupQuestionarioForm();
-}
-
-// Atualizar seção de soluções
-function updateSolucoesSection() {
-  const solucoesHTML = `
-        <div class="solucoes-content">
-            <div class="solucoes-intro">
-                <h3>Análise e Soluções Propostas</h3>
-                <p>Com base no feedback coletado dos colaboradores, identificamos as principais áreas de melhoria e propomos as seguintes soluções:</p>
-            </div>
-            
-            <div class="solucoes-grid">
-                <div class="solucao-card">
-                    <div class="solucao-header">
-                        <i class="fas fa-comments"></i>
-                        <h4>Comunicação Interna</h4>
-                    </div>
-                    <div class="solucao-content">
-                        <p><strong>Problema identificado:</strong> Falta de transparência e frequência na comunicação.</p>
-                        <div class="solucoes-propostas">
-                            <h5>Soluções Propostas:</h5>
-                            <ul>
-                                <li>Implementar reuniões semanais de alinhamento</li>
-                                <li>Criar newsletter interna mensal</li>
-                                <li>Estabelecer canais de feedback anônimo</li>
-                            </ul>
-                        </div>
-                        <div class="acoes-futuras">
-                            <h5>Plano de Ação:</h5>
-                            <p>Implementação em 30 dias com acompanhamento mensal dos resultados.</p>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="solucao-card">
-                    <div class="solucao-header">
-                        <i class="fas fa-trophy"></i>
-                        <h4>Reconhecimento</h4>
-                    </div>
-                    <div class="solucao-content">
-                        <p><strong>Problema identificado:</strong> Falta de reconhecimento pelo trabalho realizado.</p>
-                        <div class="solucoes-propostas">
-                            <h5>Soluções Propostas:</h5>
-                            <ul>
-                                <li>Programa de reconhecimento mensal</li>
-                                <li>Sistema de feedback positivo entre pares</li>
-                                <li>Reuniões individuais de desenvolvimento</li>
-                            </ul>
-                        </div>
-                        <div class="acoes-futuras">
-                            <h5>Plano de Ação:</h5>
-                            <p>Desenvolvimento do programa em 45 dias com lançamento em 60 dias.</p>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="solucao-card">
-                    <div class="solucao-header">
-                        <i class="fas fa-chart-line"></i>
-                        <h4>Crescimento Profissional</h4>
-                    </div>
-                    <div class="solucao-content">
-                        <p><strong>Problema identificado:</strong> Poucas oportunidades de crescimento e desenvolvimento.</p>
-                        <div class="solucoes-propostas">
-                            <h5>Soluções Propostas:</h5>
-                            <ul>
-                                <li>Programa de mentoria interna</li>
-                                <li>Plano de desenvolvimento individual</li>
-                                <li>Investimento em treinamentos e cursos</li>
-                            </ul>
-                        </div>
-                        <div class="acoes-futuras">
-                            <h5>Plano de Ação:</h5>
-                            <p>Desenvolvimento do programa em 90 dias com acompanhamento trimestral.</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="feedback-section">
-                <h4>Feedback sobre as Soluções</h4>
-                <form id="feedbackForm" class="feedback-form">
-                    <div class="form-group">
-                        <label for="feedback">Compartilhe sua opinião sobre as soluções propostas:</label>
-                        <textarea id="feedback" name="feedback" rows="4" placeholder="Sua opinião é importante para melhorarmos as propostas..."></textarea>
-                    </div>
-                    <button type="submit" class="btn-primary">
-                        <i class="fas fa-comment"></i> Enviar Feedback
-                    </button>
-                </form>
-            </div>
-        </div>
-    `;
-
-  $(".solucoes-container").html(solucoesHTML);
-  setupFeedbackForm();
-}
-
 // Configurar formulário do questionário
 function setupQuestionarioForm() {
   $("#questionarioForm").submit(function (e) {

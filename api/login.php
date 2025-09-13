@@ -23,6 +23,27 @@
             echo "sucesso";
             
         }
+    
+    }else if($tipo == 'empresa'){
+
+        $cnpj = $_POST['cnpj'];
+        $senha = $_POST['senha'];
+
+        $query = mysqli_fetch_array(mysqli_query($conexao,"SELECT cnpj,senha FROM empresas WHERE cnpj = '$cnpj'"));
+
+        if(empty($query)){
+
+            echo "erro";
+
+        }else if($senha != $query[1]){
+
+            echo "senha errada";
+
+        }else{
+
+            echo "sucesso";
+            
+        }
 
     }
 ?>
