@@ -386,6 +386,7 @@ function setupFuncionarioLoginForm(type) {
     $("#funcionarioLoginForm").submit(function (e) {
     e.preventDefault();
 
+    const id = $("#id").val();
     const email = $("#email").val();
     const senha = $("#senha").val();
     if (!email || !senha) {
@@ -406,7 +407,7 @@ function setupFuncionarioLoginForm(type) {
         if(response == 'sucesso'){
 
           const userData = {
-            id: email, 
+            id: id, 
             email: email,
             tipo: 'funcionario'
           };
@@ -584,58 +585,70 @@ $("#empresaLoginForm").submit(function (e) {
 }
 // Configurar formulário do questionário
 function setupQuestionarioForm() {
+
   $("#questionarioForm").submit(function (e) {
     e.preventDefault();
 
-    const formData = new FormData(this);
-    const data = Object.fromEntries(formData);
 
-    // Validar se pelo menos uma pergunta foi respondida
-    const hasAnswers = Object.keys(data).some(
-      (key) => key !== "sugestoes" && data[key]
-    );
 
-    if (!hasAnswers) {
-      showErrorMessage(
-        "Por favor, responda pelo menos uma pergunta do questionário."
-      );
-      return;
-    }
 
-    // Preparar dados para envio
-    const questionarioData = {
-      funcionario_id: currentUser ? currentUser.id : null,
-      empresa_id: currentUser ? currentUser.empresa_id : null,
-      comunicacao: data.comunicacao || null,
-      ambiente: data.ambiente || null,
-      reconhecimento: data.reconhecimento || null,
-      crescimento: data.crescimento || null,
-      equilibrio: data.equilibrio || null,
-      sugestoes: data.sugestoes || "",
-      anonimo: true,
-    };
+    // const formData = new FormData(this);
+    // const data = Object.fromEntries(formData);
 
-    // Chamada AJAX para envio do questionário
-    $.ajax({
-      url: "api/questionario.php",
-      method: "POST",
-      contentType: "application/json",
-      data: JSON.stringify(questionarioData),
-      success: function (response) {
-        if (response.success) {
-          showSuccessMessage(
-            "Questionário enviado com sucesso! Obrigado pela sua participação."
-          );
-          $("#questionarioForm")[0].reset();
-        } else {
-          showErrorMessage(response.error || "Erro ao enviar questionário");
-        }
-      },
-      error: function (xhr) {
-        const response = JSON.parse(xhr.responseText);
-        showErrorMessage(response.error || "Erro no servidor");
-      },
-    });
+    // // Validar se pelo menos uma pergunta foi respondida
+    // const hasAnswers = Object.keys(data).some(
+    //   (key) => key !== "sugestoes" && data[key]
+    // );
+
+    // if (!hasAnswers) {
+    //   showErrorMessage(
+    //     "Por favor, responda pelo menos uma pergunta do questionário."
+    //   );
+    //   return;
+    // }
+
+    // // Preparar dados para envio
+    // const questionarioData = {
+    //   funcionario_id: currentUser ? currentUser.id : null,
+    //   empresa_id: currentUser ? currentUser.empresa_id : null,
+    //   lideranca: data.lideranca || null,
+    //   beneficios: data.beneficios || null,
+    //   relacionamento: data.relacionamento || null,
+    //   estrutura: data.estrutura || null,
+    //   climaOrganizacional: data.climaOrganizacional || null,
+    //   comunicacao: data.comunicacao || null,
+    //   ambiente: data.ambiente || null,
+    //   reconhecimento: data.reconhecimento || null,
+    //   crescimento: data.crescimento || null,
+    //   equilibrio: data.equilibrio || null,
+    //   sugestoes: data.sugestoes || "",
+    //   anonimo: true,
+    // };
+
+    // console.log(questionarioData);
+    // // Chamada AJAX para envio do questionário
+    // $.ajax({
+    //   url: "api/questionario.php",
+    //   method: "POST",
+    //   contentType: "application/json",
+    //   data: JSON.stringify(questionarioData),
+    //   success: function (response) {
+
+    //     console.log(response);
+    //     if (response.success) {
+    //       showSuccessMessage(
+    //         "Questionário enviado com sucesso! Obrigado pela sua participação."
+    //       );
+    //       $("#questionarioForm")[0].reset();
+    //     } else {
+    //       showErrorMessage(response.error || "Erro ao enviar questionário");
+    //     }
+    //   },
+    //   error: function (xhr) {
+    //     const response = JSON.parse(xhr.responseText);
+    //     showErrorMessage(response.error || "Erro no servidor");
+    //   },
+    // });
   });
 }
 

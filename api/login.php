@@ -8,13 +8,13 @@
         $email = $_POST['email'];
         $senha = $_POST['senha'];
 
-        $query = mysqli_fetch_array(mysqli_query($conexao,"SELECT email,senha FROM funcionarios WHERE email = '$email'"));
+        $query = mysqli_fetch_array(mysqli_query($conexao,"SELECT id, email,senha FROM funcionarios WHERE email = '$email'"));
 
         if(empty($query)){
 
             echo "erro";
 
-        }else if($senha != $query[1]){
+        }else if($senha != $query[2]){
 
             echo "senha errada";
 
@@ -35,7 +35,7 @@
 
             echo "erro";
 
-        }else if($senha != $query[1]){
+        }else if($senha != $query[2]){
 
             echo "senha errada";
 
