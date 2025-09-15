@@ -2,6 +2,10 @@
 let currentUserType = null;
 let currentUser = null;
 
+document.addEventListener("DOMContentLoaded", function () {
+  setupQuestionarioForm();
+});
+
 // Inicialização quando o DOM estiver carregado
 $(document).ready(function () {
   initializeApp();
@@ -69,15 +73,6 @@ function checkUserSession() {
     currentUserType = userType;
     currentUser = JSON.parse(userData);
     updateUIForLoggedUser();
-  }
-}
-
-// Atualizar UI para usuário logado
-function updateUIForLoggedUser() {
-  if (currentUserType === "funcionario") {
-    updateQuestionarioSection();
-  } else if (currentUserType === "empresa") {
-    updateSolucoesSection();
   }
 }
 
@@ -254,25 +249,24 @@ function showFuncionarioLogin(type) {
             </form>
         </div>
     `;
-    
+
   if (type == "login") {
     $(".login-options").html(loginHTML);
   } else if (type == "register") {
     $(".login-options").html(registerHTML);
-    new Cleave('#cpf_regi', {
-                delimiters: ['.', '.', '-'],
-                blocks: [3, 3, 3, 2],
-                uppercase: true
-            });
-
+    new Cleave("#cpf_regi", {
+      delimiters: [".", ".", "-"],
+      blocks: [3, 3, 3, 2],
+      uppercase: true,
+    });
 
     $.ajax({
       url: "api/companies.php",
       method: "post",
       data: {},
       success: function (text) {
-        console.log(text)
-        $('#floatingSelect').html(text);
+        console.log(text);
+        $("#floatingSelect").html(text);
       },
     });
   }
@@ -303,7 +297,6 @@ function showEmpresaLogin(type) {
         </div>
     </div>
     `;
-
 
   const registerHTML = `
         <div class="login-form">
@@ -352,26 +345,26 @@ function showEmpresaLogin(type) {
     `;
   if (type == "login") {
     $(".login-options").html(loginHTML);
-    new Cleave('#cnpj', {
-                delimiters: ['.', '.', '/','-'],
-                blocks: [2, 3, 3, 4, 2],
-                uppercase: true
-            });
+    new Cleave("#cnpj", {
+      delimiters: [".", ".", "/", "-"],
+      blocks: [2, 3, 3, 4, 2],
+      uppercase: true,
+    });
   } else if (type == "register") {
     $(".login-options").html(registerHTML);
-new Cleave('#cnpj_regi_emp', {
-                delimiters: ['.', '.', '/','-'],
-                blocks: [2, 3, 3, 4, 2],
-                uppercase: true
-            });
+    new Cleave("#cnpj_regi_emp", {
+      delimiters: [".", ".", "/", "-"],
+      blocks: [2, 3, 3, 4, 2],
+      uppercase: true,
+    });
 
     $.ajax({
       url: "api/companies.php",
       method: "post",
       data: {},
       success: function (text) {
-        console.log(text)
-        $('#floatingSelect').html(text);
+        console.log(text);
+        $("#floatingSelect").html(text);
       },
     });
   }
@@ -379,275 +372,212 @@ new Cleave('#cnpj_regi_emp', {
   setupEmpresaLoginForm(type);
 }
 
-
 // Configurar formulário de login do funcionário
 function setupFuncionarioLoginForm(type) {
-  if(type == 'login')  
+  if (type == "login")
     $("#funcionarioLoginForm").submit(function (e) {
-    e.preventDefault();
+      e.preventDefault();
 
-    const id = $("#id").val();
-    const email = $("#email").val();
-    const senha = $("#senha").val();
-    if (!email || !senha) {
-      showErrorMessage("Por favor, preencha todos os campos.");
-      return;
-    }
-    // Chamada AJAX para login
-    $.ajax({
-      url: "api/login.php",
-      method: "POST",
-      data:{
-        tipo: "funcionario",
-        email: email,
-        senha: senha,
-      },
-      success: function (response) {
-        
-        if(response == 'sucesso'){
+      const id = $("#id").val();
+      const email = $("#email").val();
+      const senha = $("#senha").val();
+      if (!email || !senha) {
+        showErrorMessage("Por favor, preencha todos os campos.");
+        return;
+      }
+      // Chamada AJAX para login
+      $.ajax({
+        url: "api/login.php",
+        method: "POST",
+        data: {
+          tipo: "funcionario",
+          email: email,
+          senha: senha,
+        },
+        success: function (response) {
+          if (response == "sucesso") {
+            const userData = {
+              id: id,
+              email: email,
+              tipo: "funcionario",
+            };
+            localStorage.setItem("userData", JSON.stringify(userData));
+            localStorage.setItem("userType", "funcionario");
 
-          const userData = {
-            id: id, 
-            email: email,
-            tipo: 'funcionario'
-          };
-          localStorage.setItem('userData', JSON.stringify(userData));
-          localStorage.setItem('userType', 'funcionario');
-          
-          closeLoginModal();
-          showSuccessMessage(
-            "Login realizado com sucesso! Redirecionando para o questionário..."
-          );
-          
-          // Redirecionar para a página do questionário após 1 segundo
-          setTimeout(function () {
-            window.location.href = "questionario.php";
-          }, 1000);
+            closeLoginModal();
+            showSuccessMessage(
+              "Login realizado com sucesso! Redirecionando para o questionário..."
+            );
 
-        }else if(response == 'erro'){
-
+            // Redirecionar para a página do questionário após 1 segundo
+            setTimeout(function () {
+              window.location.href = "questionario.php";
+            }, 1000);
+          } else if (response == "erro") {
             showErrorMessage("Email não cadastrado");
-
-        }else{
-
+          } else {
             showErrorMessage("Senha errada");
-        }
-      },
-      error: function (xhr) {
-        const response = JSON.parse(xhr.responseText);
-        showErrorMessage(response.error || "Erro no servidor");
-      },
+          }
+        },
+        error: function (xhr) {
+          const response = JSON.parse(xhr.responseText);
+          showErrorMessage(response.error || "Erro no servidor");
+        },
+      });
     });
-  });
-
-  else{
-
+  else {
     $("#funcionarioLoginForm").submit(function (e) {
-    e.preventDefault();
+      e.preventDefault();
 
-    const cargo = $("#cargo_regi").val();
-    const nome = $("#nome_regi").val();
-    const email = $("#email_regi").val();
-    const senha = $("#senha_regi").val();
-    const cpf = $("#cpf_regi").val();
-    const empresa_select= $("#floatingSelect").val();
+      const cargo = $("#cargo_regi").val();
+      const nome = $("#nome_regi").val();
+      const email = $("#email_regi").val();
+      const senha = $("#senha_regi").val();
+      const cpf = $("#cpf_regi").val();
+      const empresa_select = $("#floatingSelect").val();
 
-    // Chamada AJAX para login
-    $.ajax({
-      url: "api/register.php",
-      method: "POST",
-      data:{
-        tipo: "funcionario",
-        email: email,
-        senha: senha,
-        cpf: cpf,
-        empresa: empresa_select,
-        cargo: cargo,
-        nome: nome
-      },
-      success: function (response) {
-
-        console.log(response);
+      // Chamada AJAX para login
+      $.ajax({
+        url: "api/register.php",
+        method: "POST",
+        data: {
+          tipo: "funcionario",
+          email: email,
+          senha: senha,
+          cpf: cpf,
+          empresa: empresa_select,
+          cargo: cargo,
+          nome: nome,
+        },
+        success: function (response) {
+          console.log(response);
           closeLoginModal();
-          showSuccessMessage(
-            "Cadastro realizado com SUCESSO"
-          )
-
-      },
-      error: function (xhr) {
-        const response = JSON.parse(xhr.responseText);
-        showErrorMessage(response.error || "Erro no servidor");
-      },
+          showSuccessMessage("Cadastro realizado com SUCESSO");
+        },
+        error: function (xhr) {
+          const response = JSON.parse(xhr.responseText);
+          showErrorMessage(response.error || "Erro no servidor");
+        },
+      });
     });
-  });
-
   }
 }
 
 // Configurar formulário de login da empresa
 function setupEmpresaLoginForm(type) {
-  
-  if(type == 'login'){  
-    
+  if (type == "login") {
     $("#empresaLoginForm").submit(function (e) {
-    e.preventDefault();
+      e.preventDefault();
 
-    const cnpj = $("#cnpj").val();
-    const senha = $("#senha").val();
+      const cnpj = $("#cnpj").val();
+      const senha = $("#senha").val();
 
-    if (!cnpj || !senha) {
-      showErrorMessage("Por favor, preencha todos os campos.");
-      return;
-    }
-
-    console.log(senha)
-    $.ajax({
-      url: "api/login.php",
-      method: "POST",
-      data:{
-        tipo: "empresa",
-        cnpj: cnpj,
-        senha: senha,
-      },
-      success: function (response) {
-
-        console.log(response)
-    if(response == 'sucesso'){
-          
-          const userData = {
-            id: cnpj, 
-            cnpj: cnpj,
-            tipo: 'empresa'
-          };
-          localStorage.setItem('userData', JSON.stringify(userData));
-          localStorage.setItem('userType', 'empresa');
-          
-          closeLoginModal();
-          showSuccessMessage(
-            "Login realizado com sucesso! Redirecionando para o questionário..."
-          );
-          
-          // Redirecionar para a página do questionário após 1 segundo
-          setTimeout(function () {
-            window.location.href = "relatorios.php";
-          }, 1000);
-
-        }else if(response == 'erro'){
-
-            showErrorMessage("CNPJ não cadastrado");
-
-        }else{
-
-            showErrorMessage("Senha errada");
-        }
+      if (!cnpj || !senha) {
+        showErrorMessage("Por favor, preencha todos os campos.");
+        return;
       }
+
+      console.log(senha);
+      $.ajax({
+        url: "api/login.php",
+        method: "POST",
+        data: {
+          tipo: "empresa",
+          cnpj: cnpj,
+          senha: senha,
+        },
+        success: function (response) {
+          console.log(response);
+          if (response == "sucesso") {
+            const userData = {
+              id: cnpj,
+              cnpj: cnpj,
+              tipo: "empresa",
+            };
+            localStorage.setItem("userData", JSON.stringify(userData));
+            localStorage.setItem("userType", "empresa");
+
+            closeLoginModal();
+            showSuccessMessage(
+              "Login realizado com sucesso! Redirecionando para o questionário..."
+            );
+
+            // Redirecionar para a página do questionário após 1 segundo
+            setTimeout(function () {
+              window.location.href = "relatorios.php";
+            }, 1000);
+          } else if (response == "erro") {
+            showErrorMessage("CNPJ não cadastrado");
+          } else {
+            showErrorMessage("Senha errada");
+          }
+        },
+      });
     });
+  } else {
+    $("#empresaLoginForm").submit(function (e) {
+      e.preventDefault();
 
-    });
-  }else{
-
-$("#empresaLoginForm").submit(function (e) {
-    e.preventDefault();
-
-    const cnpj = $("#cnpj_regi_emp").val();
-    const senha = $("#senha_regi_emp").val();
-    const setor = $("#floatingSelectEmp").val();
-    const nome = $("#nome_regi_emp").val();
-    const email = $("#email_regi_emp").val();
-    // Chamada AJAX para login
-    $.ajax({
-      url: "api/register.php",
-      method: "POST",
-      data:{
-        tipo: "empresa",
-        cnpj: cnpj,
-        senha: senha,
-        nome: nome,
-        setor: setor,
-        email: email
-      },
-      success: function (response) {
-        
+      const cnpj = $("#cnpj_regi_emp").val();
+      const senha = $("#senha_regi_emp").val();
+      const setor = $("#floatingSelectEmp").val();
+      const nome = $("#nome_regi_emp").val();
+      const email = $("#email_regi_emp").val();
+      // Chamada AJAX para login
+      $.ajax({
+        url: "api/register.php",
+        method: "POST",
+        data: {
+          tipo: "empresa",
+          cnpj: cnpj,
+          senha: senha,
+          nome: nome,
+          setor: setor,
+          email: email,
+        },
+        success: function (response) {
           closeLoginModal();
-          showSuccessMessage(
-            "Cadastro realizado com sucesso!"
-          );
-
-      },
-      error: function (xhr) {
-        const response = JSON.parse(xhr.responseText);
-        showErrorMessage(response.error || "Erro no servidor");
-      },
+          showSuccessMessage("Cadastro realizado com sucesso!");
+        },
+        error: function (xhr) {
+          const response = JSON.parse(xhr.responseText);
+          showErrorMessage(response.error || "Erro no servidor");
+        },
+      });
     });
-  });
-
-}
+  }
 }
 // Configurar formulário do questionário
 function setupQuestionarioForm() {
-
   $("#questionarioForm").submit(function (e) {
     e.preventDefault();
 
+    const JSONresponses = document.getElementById('responses').value;
 
+    console.log(JSON.parse(JSONresponses));
 
+    
 
-    // const formData = new FormData(this);
-    // const data = Object.fromEntries(formData);
+    //   // Chamada AJAX para envio do questionário
+    //   $.ajax({
+    //     url: "api/questionarioAPI.php",
+    //     method: "POST",
+    //     data: {
 
-    // // Validar se pelo menos uma pergunta foi respondida
-    // const hasAnswers = Object.keys(data).some(
-    //   (key) => key !== "sugestoes" && data[key]
-    // );
+    //       clima: value[0],
+    //       test: value[1]
 
-    // if (!hasAnswers) {
-    //   showErrorMessage(
-    //     "Por favor, responda pelo menos uma pergunta do questionário."
-    //   );
-    //   return;
-    // }
+    //     },
+    //     success: function (response) {
 
-    // // Preparar dados para envio
-    // const questionarioData = {
-    //   funcionario_id: currentUser ? currentUser.id : null,
-    //   empresa_id: currentUser ? currentUser.empresa_id : null,
-    //   lideranca: data.lideranca || null,
-    //   beneficios: data.beneficios || null,
-    //   relacionamento: data.relacionamento || null,
-    //   estrutura: data.estrutura || null,
-    //   climaOrganizacional: data.climaOrganizacional || null,
-    //   comunicacao: data.comunicacao || null,
-    //   ambiente: data.ambiente || null,
-    //   reconhecimento: data.reconhecimento || null,
-    //   crescimento: data.crescimento || null,
-    //   equilibrio: data.equilibrio || null,
-    //   sugestoes: data.sugestoes || "",
-    //   anonimo: true,
-    // };
+    //       console.log(response);
 
-    // console.log(questionarioData);
-    // // Chamada AJAX para envio do questionário
-    // $.ajax({
-    //   url: "api/questionario.php",
-    //   method: "POST",
-    //   contentType: "application/json",
-    //   data: JSON.stringify(questionarioData),
-    //   success: function (response) {
-
-    //     console.log(response);
-    //     if (response.success) {
-    //       showSuccessMessage(
-    //         "Questionário enviado com sucesso! Obrigado pela sua participação."
-    //       );
-    //       $("#questionarioForm")[0].reset();
-    //     } else {
-    //       showErrorMessage(response.error || "Erro ao enviar questionário");
-    //     }
-    //   },
-    //   error: function (xhr) {
-    //     const response = JSON.parse(xhr.responseText);
-    //     showErrorMessage(response.error || "Erro no servidor");
-    //   },
+    //     },
+    //     error: function (xhr) {
+    //       const response = JSON.parse(xhr.responseText);
+    //       showErrorMessage(response.error || "Erro no servidor");
+    //     },
+    //   });
     // });
   });
 }

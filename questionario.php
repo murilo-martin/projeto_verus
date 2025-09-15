@@ -627,6 +627,7 @@
                     placeholder="Compartilhe suas sugestões, críticas construtivas ou observações sobre o ambiente de trabalho..."
                 ></textarea>
             </div>
+            <input type="hidden" value="" id="responses">
 
             <button type="submit" class="submit-button">
                 <i class="fas fa-paper-plane"></i> Enviar Questionário
@@ -656,6 +657,7 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
         $(document).ready(function() {
+            
             let selectedSatisfactions = {};
 
             // Seleção de satisfação para todas as perguntas
