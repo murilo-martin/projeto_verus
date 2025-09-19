@@ -1,5 +1,6 @@
 <?php
 
+    session_start();
     include "../includes/mysqlconecta.php";
 
     $tipo = $_POST['tipo'];
@@ -30,20 +31,22 @@
         $cnpj = $_POST['cnpj'];
         $senha = $_POST['senha'];
 
-        $query = mysqli_fetch_array(mysqli_query($conexao,"SELECT cnpj,senha FROM empresas WHERE cnpj = '$cnpj'"));
+
+        $query = mysqli_fetch_array(mysqli_query($conexao,"SELECT id,cnpj,senha FROM empresas WHERE cnpj = '$cnpj'"));
 
         if(empty($query)){
 
             echo "erro";
 
-        }else if($senha != $query[1]){
+        }else if($senha != $query[2]){
 
             echo "senha errada";
 
         }else{
 
             echo "sucesso";
-            
+            $_SESSION['id'] = $query[0];
+
         }
 
     }
