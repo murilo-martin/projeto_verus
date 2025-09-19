@@ -66,13 +66,13 @@ function setupMobileMenu() {
 
 // Verificar sessão do usuário
 function checkUserSession() {
+
   const userType = localStorage.getItem("userType");
   const userData = localStorage.getItem("userData");
 
   if (userType && userData) {
     currentUserType = userType;
     currentUser = JSON.parse(userData);
-    updateUIForLoggedUser();
   }
 }
 
@@ -378,7 +378,7 @@ function setupFuncionarioLoginForm(type) {
     $("#funcionarioLoginForm").submit(function (e) {
       e.preventDefault();
 
-      const id = $("#id").val();
+      
       const email = $("#email").val();
       const senha = $("#senha").val();
       if (!email || !senha) {
@@ -395,10 +395,11 @@ function setupFuncionarioLoginForm(type) {
           senha: senha,
         },
         success: function (response) {
-          if (response == "sucesso") {
+
+          if (response != 'erro') {
+
             const userData = {
-              id: id,
-              email: email,
+              id: response,
               tipo: "funcionario",
             };
             localStorage.setItem("userData", JSON.stringify(userData));
@@ -413,9 +414,10 @@ function setupFuncionarioLoginForm(type) {
             setTimeout(function () {
               window.location.href = "questionario.php";
             }, 1000);
+
           } else if (response == "erro") {
             showErrorMessage("Email não cadastrado");
-          } else {
+          } else if (response == "senha errada"){
             showErrorMessage("Senha errada");
           }
         },
@@ -490,7 +492,6 @@ function setupEmpresaLoginForm(type) {
           console.log(response);
           if (response == "sucesso") {
             const userData = {
-              id: cnpj,
               cnpj: cnpj,
               tipo: "empresa",
             };
@@ -549,83 +550,39 @@ function setupEmpresaLoginForm(type) {
 }
 // Configurar formulário do questionário
 function setupQuestionarioForm() {
+
   $("#questionarioForm").submit(function (e) {
     e.preventDefault();
 
-    const JSONresponses = document.getElementById('responses').value;
+    const JSONresponses = JSON.parse(document.getElementById('responses').value);
+    const id_func = JSON.parse(localStorage.getItem("userData"))["id"]
+    const opiniao = $('#opiniao').val();
+    const anonimo = $('#responderAnonimamente').is(":checked")
 
-    console.log(JSON.parse(JSONresponses));
+      // Chamada AJAX para envio do questionário
+      $.ajax({
+        url: "api/questionarioAPI.php",
+        method: "POST",
+        data: {
+          respostasQuest: JSONresponses,
+          id_func: id_func,
+          opn: opiniao,
+          anonimo: anonimo,
+        },
+        success: function (response) {
 
-    
+          $("#successMessage").slideToggle(200);
 
-    //   // Chamada AJAX para envio do questionário
-    //   $.ajax({
-    //     url: "api/questionarioAPI.php",
-    //     method: "POST",
-    //     data: {
-
-    //       clima: value[0],
-    //       test: value[1]
-
-    //     },
-    //     success: function (response) {
-
-    //       console.log(response);
-
-    //     },
-    //     error: function (xhr) {
-    //       const response = JSON.parse(xhr.responseText);
-    //       showErrorMessage(response.error || "Erro no servidor");
-    //     },
-    //   });
-    // });
-  });
-}
-
-// Configurar formulário de feedback
-function setupFeedbackForm() {
-  $("#feedbackForm").submit(function (e) {
-    e.preventDefault();
-
-    const feedback = $("#feedback").val().trim();
-
-    if (!feedback) {
-      showErrorMessage("Por favor, escreva seu feedback.");
-      return;
-    }
-
-    // Preparar dados para envio
-    const feedbackData = {
-      empresa_id: currentUser ? currentUser.id : null,
-      funcionario_id: currentUser ? currentUser.id : null,
-      feedback: feedback,
-      categoria: "Geral",
-      anonimo: true,
-    };
-
-    // Chamada AJAX para envio do feedback
-    $.ajax({
-      url: "api/feedback.php",
-      method: "POST",
-      contentType: "application/json",
-      data: JSON.stringify(feedbackData),
-      success: function (response) {
-        if (response.success) {
-          showSuccessMessage(
-            "Feedback enviado com sucesso! Obrigado pela sua contribuição."
-          );
-          $("#feedbackForm")[0].reset();
-        } else {
-          showErrorMessage(response.error || "Erro ao enviar feedback");
-        }
-      },
-      error: function (xhr) {
-        const response = JSON.parse(xhr.responseText);
-        showErrorMessage(response.error || "Erro no servidor");
-      },
+        },
+        error: function (xhr) {
+          const response = JSON.parse(xhr.responseText);
+          showErrorMessage(response.error || "Erro no servidor");
+        },
+      });
     });
-  });
 }
+
+
 
 // Funções de navegação
 function scrollToSection(sectionId) {

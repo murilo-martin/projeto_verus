@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -609,17 +610,7 @@
             </div>
 
             <div class="comment-section">
-                <label class="comment-label" for="comentario">Comentários adicionais:</label>
-                <textarea 
-                    id="comentario" 
-                    name="comentario" 
-                    class="comment-textarea" 
-                    placeholder="Digite seus comentários aqui..."
-                ></textarea>
-            </div>
-
-            <div class="comment-section">
-                <h2 class="question-title">Sugestões e Observações:</h2>
+                <h2 class="question-title">Sugestões e Comentários:</h2>
                 <textarea 
                     id="opiniao" 
                     name="opiniao" 
@@ -674,7 +665,9 @@
                 selectedSatisfactions[questionId] = value;
                 $(`#${questionId}`).val(value);
                 
+                $('#responses').val(JSON.stringify(selectedSatisfactions));
                 console.log(`Pergunta ${questionId} selecionada:`, value);
+
             });
 
         });

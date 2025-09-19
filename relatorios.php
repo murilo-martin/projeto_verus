@@ -1,110 +1,5 @@
 <?php
-/**
- * Página de Relatórios - Sistema VERUS
- * Verifica se o usuário está logado como empresa
- */
 
-session_start();
-
-// Verificar se o usuário está logado como empresa
-$userData = null;
-if (isset($_SESSION['userData'])) {
-    $userData = $_SESSION['userData'];
-} else {
-    // Verificar localStorage via JavaScript
-    echo "<script>
-        const userData = JSON.parse(localStorage.getItem('userData') || '{}');
-        if (!userData.id || userData.tipo !== 'empresa') {
-            alert('Acesso negado. Apenas empresas podem acessar esta página.');
-            window.location.href = 'index.php';
-        }
-    </script>";
-}
-
-// Incluir arquivo de conexão
-require_once 'includes/mysqlconecta.php';
-
-// Obter dados dos relatórios se o usuário estiver logado
-$relatorioData = null;
-if ($userData && $userData['tipo'] === 'empresa') {
-    try {
-        $db = getDB();
-        
-        // Total de questionários
-        $sqlTotal = "SELECT COUNT(*) as total FROM questionarios WHERE empresa_id = ?";
-        $totalResult = $db->fetchOne($sqlTotal, [$userData['id']]);
-        $totalQuestionarios = (int)$totalResult['total'];
-        
-        // Média de satisfação
-        $sqlMedia = "
-            SELECT 
-                AVG(
-                    CASE 
-                        WHEN satisfacaoGeral IS NOT NULL THEN satisfacaoGeral
-                        ELSE (comunicacao + ambiente + reconhecimento + crescimento + equilibrio) / 5
-                    END
-                ) as media_satisfacao
-            FROM questionarios 
-            WHERE empresa_id = ?
-        ";
-        $mediaResult = $db->fetchOne($sqlMedia, [$userData['id']]);
-        $mediaSatisfacao = round($mediaResult['media_satisfacao'] ?? 0, 1);
-        
-        // Participação este mês
-        $sqlMes = "SELECT COUNT(*) as total FROM questionarios WHERE empresa_id = ? AND MONTH(data_envio) = MONTH(NOW()) AND YEAR(data_envio) = YEAR(NOW())";
-        $mesResult = $db->fetchOne($sqlMes, [$userData['id']]);
-        $participacaoMes = (int)$mesResult['total'];
-        
-        // Taxa de anonimato
-        $sqlAnonimo = "SELECT COUNT(*) as anonimos FROM questionarios WHERE empresa_id = ? AND anonimo = 1";
-        $anonimoResult = $db->fetchOne($sqlAnonimo, [$userData['id']]);
-        $taxaAnonimato = $totalQuestionarios > 0 ? round(($anonimoResult['anonimos'] / $totalQuestionarios) * 100) : 0;
-        
-        // Distribuição de satisfação
-        $sqlDistribuicao = "
-            SELECT 
-                CASE 
-                    WHEN satisfacaoGeral IS NOT NULL THEN satisfacaoGeral
-                    ELSE ROUND((comunicacao + ambiente + reconhecimento + crescimento + equilibrio) / 5)
-                END as nivel_satisfacao,
-                COUNT(*) as quantidade
-            FROM questionarios 
-            WHERE empresa_id = ?
-            GROUP BY nivel_satisfacao
-            ORDER BY nivel_satisfacao
-        ";
-        $distribuicaoResult = $db->fetchAll($sqlDistribuicao, [$userData['id']]);
-        
-        $distribuicao = [];
-        foreach ($distribuicaoResult as $row) {
-            $distribuicao[$row['nivel_satisfacao']] = (int)$row['quantidade'];
-        }
-        
-        // Feedback recente
-        $sqlFeedback = "
-            SELECT 
-                sugestoes,
-                DATE_FORMAT(data_envio, '%d/%m/%Y %H:%i') as data_envio
-            FROM questionarios 
-            WHERE empresa_id = ? AND sugestoes IS NOT NULL AND sugestoes != ''
-            ORDER BY data_envio DESC
-            LIMIT 10
-        ";
-        $feedbackResult = $db->fetchAll($sqlFeedback, [$userData['id']]);
-        
-        $relatorioData = [
-            'total_questionarios' => $totalQuestionarios,
-            'media_satisfacao' => $mediaSatisfacao,
-            'participacao_mes' => $participacaoMes,
-            'taxa_anonimato' => $taxaAnonimato,
-            'distribuicao_satisfacao' => $distribuicao,
-            'feedback_recente' => $feedbackResult
-        ];
-        
-    } catch (Exception $e) {
-        error_log("Erro ao carregar relatórios: " . $e->getMessage());
-    }
-}
 ?>
 <!DOCTYPE html>
 <html lang="pt-BR">
@@ -419,7 +314,6 @@ if ($userData && $userData['tipo'] === 'empresa') {
             const userData = JSON.parse(localStorage.getItem('userData') || '{}');
             if (!userData.id || userData.tipo !== 'empresa') {
                 alert('Acesso negado. Apenas empresas podem acessar esta página.');
-                window.location.href = 'index.php';
             }
         });
     </script>

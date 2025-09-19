@@ -3,6 +3,7 @@
     include "../includes/mysqlconecta.php";
 
     $tipo = $_POST['tipo'];
+
     if($tipo == 'funcionario'){
 
         $email = $_POST['email'];
@@ -20,7 +21,7 @@
 
         }else{
 
-            echo "sucesso";
+            echo $query[0];
             
         }
     
@@ -35,7 +36,7 @@
 
             echo "erro";
 
-        }else if($senha != $query[2]){
+        }else if($senha != $query[1]){
 
             echo "senha errada";
 
