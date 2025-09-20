@@ -197,6 +197,7 @@
     overflow-y: scroll;
     border-radius: .2em;
     box-shadow: rgba(0, 0, 0, 0.19) 0px 10px 20px, rgba(0, 0, 0, 0.23) 0px 6px 6px;
+    padding: .2em;
 }
 .table-container thead{
     position: sticky;
@@ -213,15 +214,15 @@
     display: none;
 
 }
-table {
-     table-layout: fixed;
-     width: 100%;
- }
+.email{
+  font-weight: 1.2em;
+}
+.suge{
 
- table td {
-     word-wrap: break-word;         
-     vertical-align: middle;
- }
+  width: 100%;
+  border-top: .1em solid black;
+
+}
 
 @media (max-width: 768px) {
   .relatorios-container {

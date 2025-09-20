@@ -72,16 +72,17 @@ function sugestoes()
     include '../includes/mysqlconecta.php';
 
     $query = mysqli_query($conexao, "SELECT funcionario_id,sugestoes,anonimo FROM questionarios WHERE empresa_id = " . $_SESSION['id'] . "");
-      
+
     while ($suge = mysqli_fetch_array($query)) {
-        $anonimo = $suge[2] == '0' ? "❌" : "✔";
-        $email = $suge[2] == '0' ? mysqli_fetch_array(mysqli_query($conexao,"SELECT email FROM funcionarios WHERE id = '$suge[0]'"))[0]: "Anônimo";    
-        echo "<tr>
+
+        $email = $suge[2] == '0' ? mysqli_fetch_array(mysqli_query($conexao, "SELECT email FROM funcionarios WHERE id = '$suge[0]'"))[0] : "Anônimo";
+        echo "
         
-        <td><p>{$suge[1]}</p></td>
-        <td>{$email}</td>
-        
-        </tr>";
+        <div class='suge'>
+            <h4 id='scrollspyHeading1' class='email'>{$email}</h4>
+            <p >{$suge[1]}</p>
+        </div>
+        ";
 
     }
 
@@ -92,7 +93,7 @@ echo "
         <div class='stat-label'>Total de Questionários</div>
     </div>
     <div class='stat-card'>
-        <div class='stat-number'>".number_format($resultMedia,2,',')."</div>
+        <div class='stat-number'>" . number_format($resultMedia, 2, ',') . "</div>
         <div class='stat-label'>Média de Satisfação</div>
     </div>
     <div class='stat-card'>
@@ -115,21 +116,12 @@ echo "
 
     <div class='charts-section-suge'>
         <div class='chart-container'>
-            <h3 class='chart-title'>Sugestões</h3>
-        
+           <h3 class='chart-title'>Sugestões</h3>
             <div class='table-container'>
-                <table class='table text-center ' id='tableSuge'> 
-                    <thead>
-                        <tr>
-                        <th scope='col'>Sugestao</th>
-                        <th scope='col'>email</th>
-                        </tr>
-                    </thead>
-                <tbody >
-                    ";sugestoes();
-                    echo"</tbody>
-                </table>
-                </div>
+            <div data-bs-spy='scroll' data-bs-target='#navbar-example2' data-bs-root-margin='0px 0px -40%' data-bs-smooth-scroll='true' class='scrollspy-example bg-body-tertiary p-3 rounded-2' tabindex='0'>";
+                sugestoes();
+            echo "</div>
+            </div>  
             </div>   
     </div>
 ";
