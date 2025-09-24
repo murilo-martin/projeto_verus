@@ -35,7 +35,7 @@
                     </div>
                     <div class="offcanvas-body">
                         <ul class="navbar-nav d-flex flex-column gap-3">
-                            <a class="nav-text">
+                            <a href="typefeedback.php" class="nav-text">
                                 <li class="nav-item">Categorias de Feedback</li>
                             </a>
                         </ul>
@@ -73,9 +73,11 @@
                         Explore nosso sistema, aplique diagnósticos e transforme informações em ações estratégicas!
                     </p>
                     <div class="cta-buttons">
-                        <button class="btn-primary">
-                            <i class="fas fa-chart-line"></i>Ver Tipos de Feedbacks
-                        </button>
+                        <a href="typefeedback.php" style='text-decoration: none;'>
+                            <button class="btn-primary" >
+                                <i class="fas fa-chart-line"></i>Ver Tipos de Feedbacks
+                            </button>
+                        </a>
                         <button class="btn-secondary" onclick="openLoginModal('register')">
                             <i class="fas fa-clipboard-list"></i>Cadastre-se
                         </button>
@@ -104,7 +106,7 @@
                             <p>Para acessar o questionário, faça login como funcionário ou empresa.</p>
                             <button class="btn-primary" onclick="openLoginModal('login')">
                                 <svg xmlns="http://www.w3.org/2000/svg" height="44px" viewBox="0 -960 960 960"
-                                    width="44px">
+                                    width="44px" fill="#87CEEB">
                                     <path
                                         d="M480-120v-80h280v-560H480v-80h280q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120H480Zm-80-160-55-58 102-102H120v-80h327L345-622l55-58 200 200-200 200Z" />
                                 </svg>
