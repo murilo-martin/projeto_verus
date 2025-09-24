@@ -58,38 +58,16 @@
     </header>
     <main>
         <section class="hero">
-            <div id="carouselExampleInterval" class="carousel slide w-100" style="height:40em; box-shadow: rgba(0, 0, 0, 0.19) 0px 10px 20px, rgba(0, 0, 0, 0.23) 0px 6px 6px;" data-bs-ride="carousel">
-                <div class="carousel-inner">
-                    <div class="carousel-item active"data-bs-interval="10000">
-                        <div class="row" style="height:40em">
-                            <div class="col d-flex justify-content-center align-items-center" >AAAAAAAAAAAAAAAAAAAAAAAAAA</div>
-                            <div class="col d-flex justify-content-center align-items-center">BBBBBBBBBBBBBBBBBBBBBB</div>
-                        </div>
-                    </div>
-                    <div class="carousel-item" data-bs-interval="2000">
-                        <div class="row" style="height:40em">
-                            <div class="col d-flex justify-content-center align-items-center">AAAAAAAAAAAAAAAAAAAAAAAAAA</div>
-                            <div class="col d-flex justify-content-center align-items-center">BBBBBBBBBBBBBBBBBBBBBB</div>
-                        </div>
-                    </div>
-                    <div class="carousel-item">
-                       <div class="row"  style="height:40em">
-                            <div class="col d-flex justify-content-center align-items-center">AAAAAAAAAAAAAAAAAAAAAAAAAA</div>
-                            <div class="col d-flex justify-content-center align-items-center">BBBBBBBBBBBBBBBBBBBBBB</div>
-                        </div>
-                    </div>
-                </div>
-                <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleInterval"
-                    data-bs-slide="prev">
-                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                    <span class="visually-hidden">Previous</span>
-                </button>
-                <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleInterval"
-                    data-bs-slide="next">
-                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                    <span class="visually-hidden">Next</span>
-                </button>
-            </div>
+		<div class="d-flex align-items-center justify-content-center flex-column w-100 h-100">
+            <div class="grid">
+				<div class="container-feedback" onclick="showmodal()">Comunicação Interna</div>
+				<div class="container-feedback">Liderança e Gestão</div>
+				<div class="container-feedback">Desenvolvimento Profissional</div>
+				<div class="container-feedback" style="grid-row-start: 2;">Ambiente Físico</div>
+				<div class="container-feedback" style="grid-row-start: 2;">Reconhecimento e Recompensas</div>
+				<div class="container-feedback" style="grid-row-start: 2;">Diversidade e Inclusão</div>
+			</div>
+		</div>
         </section>
     </main>
     <footer class="footer">
@@ -125,9 +103,27 @@
             </div>
         </div>
     </footer>
+	<div class="modal" tabindex="-1" id="modal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Modal title</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p>Modal body text goes here.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary">Save changes</button>
+      </div>
+    </div>
+  </div>
+</div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
         crossorigin="anonymous"></script>
+	<script src="assets/js/showModal.js"></script>
 </body>
 
 </html>
