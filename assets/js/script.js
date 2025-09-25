@@ -66,7 +66,6 @@ function setupMobileMenu() {
 
 // Verificar sessão do usuário
 function checkUserSession() {
-
   const userType = localStorage.getItem("userType");
   const userData = localStorage.getItem("userData");
 
@@ -378,7 +377,6 @@ function setupFuncionarioLoginForm(type) {
     $("#funcionarioLoginForm").submit(function (e) {
       e.preventDefault();
 
-      
       const email = $("#email").val();
       const senha = $("#senha").val();
       if (!email || !senha) {
@@ -395,9 +393,7 @@ function setupFuncionarioLoginForm(type) {
           senha: senha,
         },
         success: function (response) {
-
-          if (response != 'erro') {
-
+          if (response != "erro") {
             const userData = {
               id: response,
               tipo: "funcionario",
@@ -414,10 +410,9 @@ function setupFuncionarioLoginForm(type) {
             setTimeout(function () {
               window.location.href = "questionario.php";
             }, 1000);
-
           } else if (response == "erro") {
             showErrorMessage("Email não cadastrado");
-          } else if (response == "senha errada"){
+          } else if (response == "senha errada") {
             showErrorMessage("Senha errada");
           }
         },
@@ -550,39 +545,36 @@ function setupEmpresaLoginForm(type) {
 }
 // Configurar formulário do questionário
 function setupQuestionarioForm() {
-
   $("#questionarioForm").submit(function (e) {
     e.preventDefault();
 
-    const JSONresponses = JSON.parse(document.getElementById('responses').value);
-    const id_func = JSON.parse(localStorage.getItem("userData"))["id"]
-    const opiniao = $('#opiniao').val();
-    const anonimo = $('#responderAnonimamente').is(":checked")
+    const JSONresponses = JSON.parse(
+      document.getElementById("responses").value
+    );
+    const id_func = JSON.parse(localStorage.getItem("userData"))["id"];
+    const opiniao = $("#opiniao").val();
+    const anonimo = $("#responderAnonimamente").is(":checked");
 
-      // Chamada AJAX para envio do questionário
-      $.ajax({
-        url: "api/questionarioAPI.php",
-        method: "POST",
-        data: {
-          respostasQuest: JSONresponses,
-          id_func: id_func,
-          opn: opiniao,
-          anonimo: anonimo,
-        },
-        success: function (response) {
-
-          $("#successMessage").slideToggle(200);
-
-        },
-        error: function (xhr) {
-          const response = JSON.parse(xhr.responseText);
-          showErrorMessage(response.error || "Erro no servidor");
-        },
-      });
+    // Chamada AJAX para envio do questionário
+    $.ajax({
+      url: "api/questionarioAPI.php",
+      method: "POST",
+      data: {
+        respostasQuest: JSONresponses,
+        id_func: id_func,
+        opn: opiniao,
+        anonimo: anonimo,
+      },
+      success: function (response) {
+        $("#successMessage").slideToggle(200);
+      },
+      error: function (xhr) {
+        const response = JSON.parse(xhr.responseText);
+        showErrorMessage(response.error || "Erro no servidor");
+      },
     });
+  });
 }
-
-
 
 // Funções de navegação
 function scrollToSection(sectionId) {

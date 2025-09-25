@@ -118,7 +118,7 @@ echo "
         <div class='chart-container'>
            <h3 class='chart-title'>Sugestões</h3>
             <div class='table-container'>
-            <div data-bs-spy='scroll' data-bs-target='#navbar-example2' data-bs-root-margin='0px 0px -40%' data-bs-smooth-scroll='true' class='scrollspy-example bg-body-tertiary p-3 rounded-2' tabindex='0'>";
+            <div data-bs-spy='scroll' data-bs-target='#navbar-example2' data-bs-root-margin='0px 0px -40%' data-bs-smooth-scroll='true' class='scrollspy-example bg-body-tertiary p-3 rounded-2 d-flex flex-column gap-4' tabindex='0'>";
                 sugestoes();
             echo "</div>
             </div>  
