@@ -22,7 +22,8 @@
 
         }else{
 
-            echo $query[0];
+            echo "sucesso";
+            $_SESSION['id_func'] = $query[0];
             
         }
     

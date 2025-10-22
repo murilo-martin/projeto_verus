@@ -60,21 +60,12 @@
         <section class="hero">
 		<div class="d-flex align-items-center justify-content-center flex-column w-100 h-100">
             <div class="grid">
-<<<<<<< HEAD
 				<div class="container-feedback" onclick="showmodal('Comunicação Interna', 'Refere-se à troca de informações dentro da empresa, como avisos, reuniões, mensagens e alinhamento entre equipes. O feedback ajuda a identificar se a comunicação é clara, rápida e eficiente.')">Comunicação Interna</div>
 				<div class="container-feedback" onclick="showmodal('Lideranca e Gestão', 'Avalia como líderes e gestores conduzem suas equipes, incluindo tomada de decisão, orientação, apoio e capacidade de motivar os colaboradores.')">Liderança e Gestão</div>
 				<div class="container-feedback" onclick="showmodal('Desenvolvimento Profissional', 'Envolve oportunidades de crescimento, treinamentos, cursos e planos de carreira oferecidos para que os colaboradores evoluam em suas funções.')" >Desenvolvimento Profissional</div>
 				<div class="container-feedback" style="grid-row-start: 2;" onclick="showmodal('Ambiente Físico', 'Trata das condições do local de trabalho, como conforto, segurança, limpeza, ergonomia e recursos disponíveis para desempenhar as atividades.')">Ambiente Físico</div>
 				<div class="container-feedback" style="grid-row-start: 2;" onclick="showmodal('Reconhecimento e Recompensas', 'Observa se os esforços e resultados dos colaboradores são valorizados, seja por elogios, bônus, promoções ou outros incentivos.')">Reconhecimento e Recompensas</div>
 				<div class="container-feedback" style="grid-row-start: 2;" onclick="showmodal('Diversidade e Inclusão', 'Analisa se a empresa valoriza e respeita diferentes culturas, gêneros, idades e opiniões, garantindo um ambiente acolhedor e igualitário para todos.')">Diversidade e Inclusão</div>
-=======
-				<div class="container-feedback" onclick="showmodal()">Comunicação Interna</div>
-				<div class="container-feedback">Liderança e Gestão</div>
-				<div class="container-feedback">Desenvolvimento Profissional</div>
-				<div class="container-feedback" style="grid-row-start: 2;">Ambiente Físico</div>
-				<div class="container-feedback" style="grid-row-start: 2;">Reconhecimento e Recompensas</div>
-				<div class="container-feedback" style="grid-row-start: 2;">Diversidade e Inclusão</div>
->>>>>>> 4f999d49b66d7a50512125a185d230ee542611f4
 			</div>
 		</div>
         </section>
@@ -112,7 +103,6 @@
             </div>
         </div>
     </footer>
-<<<<<<< HEAD
 	<div id="modal-feed" class="modal-feed">
             <div class="modal-content-feed">
                 <span class="close" onclick="closeModal()">&times;</span>

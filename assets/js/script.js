@@ -4,6 +4,7 @@ let currentUser = null;
 
 document.addEventListener("DOMContentLoaded", function () {
   setupQuestionarioForm();
+  
 });
 
 // Inicialização quando o DOM estiver carregado
@@ -393,13 +394,7 @@ function setupFuncionarioLoginForm(type) {
           senha: senha,
         },
         success: function (response) {
-          if (response != "erro") {
-            const userData = {
-              id: response,
-              tipo: "funcionario",
-            };
-            localStorage.setItem("userData", JSON.stringify(userData));
-            localStorage.setItem("userType", "funcionario");
+          if (response == "sucesso") {
 
             closeLoginModal();
             showSuccessMessage(
@@ -410,6 +405,7 @@ function setupFuncionarioLoginForm(type) {
             setTimeout(function () {
               window.location.href = "questionario.php";
             }, 1000);
+
           } else if (response == "erro") {
             showErrorMessage("Email não cadastrado");
           } else if (response == "senha errada") {
@@ -551,7 +547,6 @@ function setupQuestionarioForm() {
     const JSONresponses = JSON.parse(
       document.getElementById("responses").value
     );
-    const id_func = JSON.parse(localStorage.getItem("userData"))["id"];
     const opiniao = $("#opiniao").val();
     const anonimo = $("#responderAnonimamente").is(":checked");
 
@@ -561,11 +556,11 @@ function setupQuestionarioForm() {
       method: "POST",
       data: {
         respostasQuest: JSONresponses,
-        id_func: id_func,
         opn: opiniao,
         anonimo: anonimo,
       },
       success: function (response) {
+        console.log(response);
         $("#successMessage").slideToggle(200);
       },
       error: function (xhr) {

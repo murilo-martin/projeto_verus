@@ -75,7 +75,7 @@ function sugestoes()
 
     while ($suge = mysqli_fetch_array($query)) {
 
-        $email = $suge[2] == '0' ? mysqli_fetch_array(mysqli_query($conexao, "SELECT email FROM funcionarios WHERE id = '$suge[0]'"))[0] : "Anônimo";
+        $email = $suge[2] == '1' ? mysqli_fetch_array(mysqli_query($conexao, "SELECT email FROM funcionarios WHERE id = '$suge[0]'"))[0] : "Anônimo";
         echo "
         
         <div class='suge'>
