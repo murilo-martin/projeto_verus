@@ -1,16 +1,15 @@
 
 document.addEventListener("DOMContentLoaded", function () {
-  table();
+  printReport();
 });
 
-function table() {
-  
-      // Chamada AJAX para envio do questionário
-      $.ajax({
-        url: "api/relatoriosAPI.php",
+function printReport(){
+  $.ajax({
+        url: "api/printAPI.php",
         method: "POST",
         success: function (data) {
 
+            console.log(data);
           $('#table').html(data)
 
         },
@@ -19,4 +18,12 @@ function table() {
           showErrorMessage(response.error || "Erro no servidor");
         },
       });
+
+}
+function imprimir()
+{
+  document.getElementById("report").style.display = "none";
+  window.print();
+  location.href = "relatorios.php"
+
 }

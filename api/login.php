@@ -10,7 +10,7 @@
         $email = $_POST['email'];
         $senha = $_POST['senha'];
 
-        $query = mysqli_fetch_array(mysqli_query($conexao,"SELECT id, email,senha FROM funcionarios WHERE email = '$email'"));
+        $query = mysqli_fetch_array(mysqli_query($conexao,"SELECT id, email,senha,cargo FROM funcionarios WHERE email = '$email'"));
 
         if(empty($query)){
 
@@ -22,9 +22,13 @@
 
         }else{
 
+            if($query[3] != 'ADM'){
             echo "sucesso";
             $_SESSION['id_func'] = $query[0];
-            
+            }
+            else{
+                echo "sucessoADM";
+            }
         }
     
     }else if($tipo == 'empresa'){

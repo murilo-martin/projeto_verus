@@ -107,6 +107,32 @@ body {
     color: var(--primary-blue);
 }
 
+.panel-control{
+    background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-blue) 100%);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    padding-top: 80px;
+    position: relative;
+}
+.title-panel{
+
+    position: absolute;
+    font-weight: bold;
+    color: 000;
+    top: 30%;
+    left: 50%;
+    font-size: 2.5em;
+    color: var(--white);
+    transform: translate(-50%, -50%)
+
+}
+.modal-body{
+    display: grid;
+    grid-template-columns: repeat(2, 2fr);
+    grid-template-rows: repeat(2, 5fr);
+    grid-column-gap: 2em;
+}
 /* Hero Section */
 .hero {
     background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-blue) 100%);

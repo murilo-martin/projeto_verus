@@ -410,6 +410,16 @@ function setupFuncionarioLoginForm(type) {
             showErrorMessage("Email não cadastrado");
           } else if (response == "senha errada") {
             showErrorMessage("Senha errada");
+          }else if(response == "sucessoADM"){
+            closeLoginModal();
+            showSuccessMessage(
+              "Seja Bem-vindo a pagina de ADM do projeto Verus"
+            );
+
+            // Redirecionar para a página do questionário após 1 segundo
+            setTimeout(function () {
+              window.location.href = "administrador.php";
+            }, 1000);
           }
         },
         error: function (xhr) {

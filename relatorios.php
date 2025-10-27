@@ -19,9 +19,9 @@
         <i class="fas fa-arrow-left"></i> Voltar
     </button>
 
-    <button class="logout-button" onclick="logout()">
-        <i class="fas fa-sign-out-alt"></i> Sair
-    </button>
+    <a href="print.php"><button class="report-button">
+        Imprimir relatorio
+    </button></a>
 
     <div class="relatorios-container">
         <div class="relatorios-header">

@@ -1,12 +1,5 @@
 <?php
-/**
- * API para relatórios de clima organizacional
- * Sistema VERUS - Clima Organizacional
- */
 
-
-
-// Incluir arquivo de conexão
 include '../includes/mysqlconecta.php';
 
 session_start();
@@ -24,7 +17,6 @@ $resultMes = mysqli_fetch_array(mysqli_query($conexao, "SELECT COUNT(*) as total
 
 // Taxa de anonimato
 $resultAnonimo = mysqli_fetch_array(mysqli_query($conexao, " SELECT COUNT(*) as anonimos FROM questionarios WHERE empresa_id = '$id_emp' AND anonimo = 1"))[0];
-
 
 function nivelSatisfacao()
 {
@@ -56,16 +48,14 @@ function nivelSatisfacao()
 
     for ($i = 1; $i <= 5; $i++) {
         $value = $valores[$i];
-        $percentage = ($value / $maxValue) * 100;
-        $html .= "<div class='chart-bar' style='height: {$percentage}%'>";
-        $html .= "<div class='chart-value'>{$value}</div>";
-        $html .= "<div class='chart-label'>{$labels[$i - 1]}</div>";
-        $html .= "</div>";
+        $html .= "<tr>";
+        $html .= "<td>{$labels[$i - 1]}</td>";
+        $html .= "<td>{$value}</td>";
+        $html .= "</tr>";
     }
     return $html;
 
 }
-
 function sugestoes()
 {
     include '../includes/mysqlconecta.php';
@@ -77,52 +67,63 @@ function sugestoes()
         $email = $suge[2] == '1' ?  "Anônimo":mysqli_fetch_array(mysqli_query($conexao, "SELECT email FROM funcionarios WHERE id = '$suge[0]'"))[0] ;
         echo "
         
-        <div class='suge'>
-            <h4 id='scrollspyHeading1' class='email'>{$email}</h4>
+            <h4 id='scrollspyHeading1' class='email-print'>{$email}</h4>
             <p >{$suge[1]}</p>
-        </div>
         ";
 
     }
 
 }
 echo "
-    <div class='stat-card'>
-        <div class='stat-number'>{$resultTotal}</div>
-        <div class='stat-label'>Total de Questionários</div>
-    </div>
-    <div class='stat-card'>
-        <div class='stat-number'>" . number_format($resultMedia, 2, ',') . "</div>
-        <div class='stat-label'>Média de Satisfação</div>
-    </div>
-    <div class='stat-card'>
-        <div class='stat-number'>{$resultMes}</div>
-        <div class='stat-label'>Participação este Mês</div>
-    </div>
-    <div class='stat-card'>
-        <div class='stat-number'>{$resultAnonimo}</div>
-        <div class='stat-label'>Participação Anônima</div>
-    </div>
-    
-    <div class='charts-section'>
-        <div class='chart-container'>
-            <h3 class='chart-title'>Distribuição de Satisfação</h3>
-            <div class='satisfaction-chart'>
-                " . nivelSatisfacao() . "
-            </div>   
-        </div>
-    </div>
+<div class='container-print'>
+    <p class='title-print'>Relatorio Geral</p>
+<table class='table'>
+  <thead class='table-light'>
+    <tr>
+        <td>indicador</td>
+        <td>Valor</td>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>   
+        <td>Total de questionario</td>
+        <td>$resultTotal</td>
+    </tr>
+    <tr>
+        <td>Média de satisfação</td>
+        <td>".number_format($resultMedia, 2, ',')."</td>
+    </tr>
+    <tr>
+        <td>Participação no Mês</td>
+        <td>$resultMes</td>
+    </tr>
+    <tr>
+        <td>Participação anônima</td>
+        <td>$resultAnonimo</td>
+    </tr>
+    </tbody>
+</table>
+</div>
+<div class='container-print'>
+    <p class='title-print'>Distribuição de Satisfação</p>
 
-    <div class='charts-section-suge'>
-        <div class='chart-container'>
-           <h3 class='chart-title'>Sugestões</h3>
-            <div class='table-container'>
-            <div data-bs-spy='scroll' data-bs-target='#navbar-example2' data-bs-root-margin='0px 0px -40%' data-bs-smooth-scroll='true' class='scrollspy-example bg-body-tertiary p-3 rounded-2 d-flex flex-column gap-4' tabindex='0'>";
-                sugestoes();
-            echo "</div>
-            </div>  
-            </div>   
-    </div>
-";
+<table class='table'>
+  <thead class='table-light'>
+    <tr>
+        <td>Nivel de satisfação</td>
+        <td>Valor</td>
+    </tr>
+  </thead>
+  <tbody>
+    ".nivelSatisfacao()."
+    </tbody>
+</table>
+</div>
+<div class='container-print'>
+    <p class='title-print'>Sugestões</p>
+    <div>";
+    sugestoes();
+    echo "</div>
+</div>";
 
 ?>
