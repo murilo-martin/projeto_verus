@@ -332,7 +332,7 @@
 
             <!-- Questão 1: Ambiente de Trabalho -->
             <div class="question-section">
-                <h2 class="question-title">1. Como você avalia o ambiente de trabalho em sua área?</h2>
+                <h2 class="question-title">1. <?php include "includes/mysqlconecta.php"; echo mysqli_fetch_array(mysqli_query($conexao,"SELECT * FROM perguntas"))[1];?>?</h2>
                 <div class="satisfaction-scale">
                     <div class="satisfaction-option" data-value="1" data-question="ambienteTrabalho">
                         <div class="satisfaction-emoji">😠</div>
@@ -360,7 +360,7 @@
 
             <!-- Questão 2: Liderança -->
             <div class="question-section">
-                <h2 class="question-title">2. Como você avalia a liderança e gestão em sua área?</h2>
+                <h2 class="question-title">2. <?php include "includes/mysqlconecta.php"; echo mysqli_fetch_array(mysqli_query($conexao,"SELECT * FROM perguntas"))[2];?>?</h2>
                 <div class="satisfaction-scale">
                     <div class="satisfaction-option" data-value="1" data-question="lideranca">
                         <div class="satisfaction-emoji">😠</div>
@@ -388,7 +388,7 @@
 
             <!-- Questão 3: Comunicação -->
             <div class="question-section">
-                <h2 class="question-title">3. Como você avalia a comunicação interna da empresa?</h2>
+                <h2 class="question-title">3. <?php include "includes/mysqlconecta.php"; echo mysqli_fetch_array(mysqli_query($conexao,"SELECT * FROM perguntas"))[3];?>?</h2>
                 <div class="satisfaction-scale">
                     <div class="satisfaction-option" data-value="1" data-question="comunicacao">
                         <div class="satisfaction-emoji">😠</div>
@@ -416,7 +416,7 @@
 
             <!-- Questão 4: Oportunidades de Crescimento -->
             <div class="question-section">
-                <h2 class="question-title">4. Como você avalia as oportunidades de crescimento profissional?</h2>
+                <h2 class="question-title">4. <?php include "includes/mysqlconecta.php"; echo mysqli_fetch_array(mysqli_query($conexao,"SELECT * FROM perguntas"))[4];?>?</h2>
                 <div class="satisfaction-scale">
                     <div class="satisfaction-option" data-value="1" data-question="crescimento">
                         <div class="satisfaction-emoji">😠</div>
@@ -444,7 +444,7 @@
 
             <!-- Questão 5: Reconhecimento -->
             <div class="question-section">
-                <h2 class="question-title">5. Como você avalia o reconhecimento e valorização dos funcionários?</h2>
+                <h2 class="question-title">5. <?php include "includes/mysqlconecta.php"; echo mysqli_fetch_array(mysqli_query($conexao,"SELECT * FROM perguntas"))[5];?>?</h2>
                 <div class="satisfaction-scale">
                     <div class="satisfaction-option" data-value="1" data-question="reconhecimento">
                         <div class="satisfaction-emoji">😠</div>
@@ -472,7 +472,7 @@
 
             <!-- Questão 6: Equilíbrio Vida Pessoal/Profissional -->
             <div class="question-section">
-                <h2 class="question-title">6. Como você avalia o equilíbrio entre vida pessoal e profissional?</h2>
+                <h2 class="question-title">6. <?php include "includes/mysqlconecta.php"; echo mysqli_fetch_array(mysqli_query($conexao,"SELECT * FROM perguntas"))[6];?>?</h2>
                 <div class="satisfaction-scale">
                     <div class="satisfaction-option" data-value="1" data-question="equilibrio">
                         <div class="satisfaction-emoji">😠</div>
@@ -500,7 +500,7 @@
 
             <!-- Questão 7: Benefícios -->
             <div class="question-section">
-                <h2 class="question-title">7. Como você avalia os benefícios oferecidos pela empresa?</h2>
+                <h2 class="question-title">7. <?php include "includes/mysqlconecta.php"; echo mysqli_fetch_array(mysqli_query($conexao,"SELECT * FROM perguntas"))[7];?>?</h2>
                 <div class="satisfaction-scale">
                     <div class="satisfaction-option" data-value="1" data-question="beneficios">
                         <div class="satisfaction-emoji">😠</div>
@@ -528,7 +528,7 @@
 
             <!-- Questão 8: Relacionamento com Colegas -->
             <div class="question-section">
-                <h2 class="question-title">8. Como você avalia o relacionamento com seus colegas de trabalho?</h2>
+                <h2 class="question-title">8. <?php include "includes/mysqlconecta.php"; echo mysqli_fetch_array(mysqli_query($conexao,"SELECT * FROM perguntas"))[8];?>?</h2>
                 <div class="satisfaction-scale">
                     <div class="satisfaction-option" data-value="1" data-question="relacionamento">
                         <div class="satisfaction-emoji">😠</div>
@@ -556,7 +556,7 @@
 
             <!-- Questão 9: Estrutura e Processos -->
             <div class="question-section">
-                <h2 class="question-title">9. Como você avalia a estrutura e processos organizacionais?</h2>
+                <h2 class="question-title">9. <?php include "includes/mysqlconecta.php"; echo mysqli_fetch_array(mysqli_query($conexao,"SELECT * FROM perguntas"))[9];?>?</h2>
                 <div class="satisfaction-scale">
                     <div class="satisfaction-option" data-value="1" data-question="estrutura">
                         <div class="satisfaction-emoji">😠</div>
@@ -584,7 +584,7 @@
 
             <!-- Questão 10: Clima Organizacional Geral -->
             <div class="question-section">
-                <h2 class="question-title">10. Como você avalia o clima organizacional geral da empresa?</h2>
+                <h2 class="question-title">10. <?php include "includes/mysqlconecta.php"; echo mysqli_fetch_array(mysqli_query($conexao,"SELECT * FROM perguntas"))[10];?> ?</h2>
                 <div class="satisfaction-scale">
                     <div class="satisfaction-option" data-value="1" data-question="climaOrganizacional">
                         <div class="satisfaction-emoji">😠</div>
