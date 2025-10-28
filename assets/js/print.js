@@ -23,6 +23,7 @@ function printReport(){
 function imprimir()
 {
   document.getElementById("report").style.display = "none";
+  document.getElementById("back").style.display = "none";
   window.print();
   location.href = "relatorios.php"
 

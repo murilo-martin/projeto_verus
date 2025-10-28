@@ -127,11 +127,12 @@ body {
     transform: translate(-50%, -50%)
 
 }
-.modal-body{
+.modal-body-question{
     display: grid;
     grid-template-columns: repeat(2, 2fr);
-    grid-template-rows: repeat(2, 5fr);
-    grid-column-gap: 2em;
+    grid-template-rows: repeat(1, 5fr);
+    column-gap: 1.2em;
+    padding: .5em;
 }
 /* Hero Section */
 .hero {
@@ -419,11 +420,19 @@ body {
     padding: 20px 20px;
     border-radius: 15px;
     width: fit-content;
-    min-width: 25em;
     max-width: 600px;
+    min-width: 25em;
     animation: modalSlideIn 0.3s ease;
     text-align: center;
-    
+}
+#form_crud{
+
+    height: 20em;
+    overflow-y: scroll;
+
+}
+#form_crud::-webkit-scrollbar{
+    display: none;
 }
 .modal-content-feed{
     background-color: var(--white);

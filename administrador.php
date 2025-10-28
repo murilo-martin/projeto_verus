@@ -58,14 +58,14 @@
 
     </header>
     <main>
-        
+
         <section class="panel-control">
             <div class="title-panel">Painel de Controle</div>
-		<div class="d-flex align-items-center justify-content-center gap-3 w-100 h-100">
-				<div class="container-feedback" onclick="showModalEditQuestion()">Trocar Perguntas</div>
-                <div class="container-feedback" onclick="showmodal()">Controle de empresas</div>
-				<div class="container-feedback" onclick="showmodal()">Zerar Relatorios</div>
-		</div>
+            <div class="d-flex align-items-center justify-content-center gap-3 w-100 h-100">
+                <div class="container-feedback" onclick="showModalEditQuestion()">Trocar Perguntas</div>
+                <div class="container-feedback" onclick="showModalCrud()">Controle de empresas</div>
+                <div class="container-feedback" onclick="showmodalTruncate()">Zerar Relatorios</div>
+            </div>
         </section>
     </main>
     <footer class="footer">
@@ -101,24 +101,25 @@
             </div>
         </div>
     </footer>
-	<div id="modal-feed" class="modal-feed">
-            <div class="modal-content-feed">
-                <span class="close" onclick="closeModal()">&times;</span>
-                <h2 id="title"></h2>
-                <div class="text" id="text">
-                    
-                </div>
+    <div id="modal-feed" class="modal-feed">
+        <div class="modal-content-feed">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h2 id="title"></h2>
+            <div class="text" id="text">
+
             </div>
         </div>
-     <div class="modal fade " id="modal_question" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" >
-        <div class="modal-dialog modal-dialog-centered" style="max-width:200em;">
-            <div class="modal-content">
-                <div class="modal-header" >
+    </div>
+    <!-- Modal Alterar -->
+    <div class="modal fade" id="modal_question" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-xl">
+            <div class="modal-content" style="max-width:1440px">
+                <div class="modal-header">
                     <h1 class="modal-title fs-5" id="exampleModalLabel">Trocar perguntas</h1>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <form id="form_quest" class="needs-validation" novalidate>
-                    <div class="modal-body" id="modalQuestion_body" >
+                    <div class="modal-body-question" id="modalQuestion_body">
                     </div>
                     <div class="modal-footer">
                         <button type="submit" class="btn btn-primary">Editar</button>
@@ -127,27 +128,100 @@
             </div>
         </div>
     </div>
-	<div class="modal" tabindex="-1" id="modal">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title">Modal title</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <p>Modal body text goes here.</p>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary">Save changes</button>
-      </div>
+    <!-- Modal de zerar Banco -->
+    <div class="modal fade " id="modal_truncate" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content" style="max-width:1440px">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Zerar as perguntas</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="form_zerar" class="needs-validation" novalidate>
+                    <div class="modal-body" id="modalTruncate_body">
+                        <p style="font-weight:bold;">Tem certeza que deseja zerar todas as respostas?</p>
+                    </div>
+                    <div class="modal-footer">
+                        <a href="administrador.php"><button type="button" class="btn btn-danger">Cancelar</button></a>
+                        <button type="submit" class="btn btn-success">Confirmar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
-  </div>
-</div>
+    <!-- Modal de gerenciamento -->
+    <div class="modal fade " id="modal_crud" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-xl">
+            <div class="modal-content" style="max-width:1440px">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Gerenciar empresas</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="form_crud" class="needs-validation" novalidate>
+                    <div class="modal-body-crud" >
+                        <table class="table table-striped table-hover">
+                            <thead>
+                                <tr>
+                                    <th>CNPJ</th><th>Nome da empresa</th><th>Setor</th><th>Email</th><th>Senha</th><th>Ativo</th><th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="modalcrud_body">
+
+                            </tbody>
+                        </table>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de delete -->
+     <div class="modal fade " id="modal_delete" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Desativar empresa</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="form_del" class="needs-validation" novalidate>
+                    <div class="modal-body" id="modaldelete_body">
+                        <p style="font-weight:bold;">Tem certeza que deseja desativar essa empresa?</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger" onclick="closeModal('del')">Cancelar</button>
+                        <button type="submit" class="btn btn-success">Confirmar</button>
+                    </div>
+                    <input type="hidden" id="id_emp">
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal edit -->
+     <div class="modal fade " id="modal_edit" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Editar item</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="form_edit" class="needs-validation" novalidate>
+                    <div class="modal-body" id="modalEdit_body">
+                       
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger" onclick="closeModal('edit')">Cancelar</button>
+                        <button type="submit" class="btn btn-success">Confirmar</button>
+                    </div>
+                    <input type="hidden" id="id_emp">
+                </form>
+            </div>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
         crossorigin="anonymous"></script>
-	<script src="assets/js/showModal.js"></script>
+    <script src="assets/js/showModal.js"></script>
 </body>
 
 </html>

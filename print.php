@@ -13,7 +13,7 @@
         <button class="report-button" id="report" onclick="imprimir()">
         Imprimir relatorio
         </button>
-        <button class="back-button" onclick="window.location.href='relatorios.php'">
+        <button class="back-button" id="back"  onclick="window.location.href='relatorios.php'">
         <i class="fas fa-arrow-left"></i> Voltar
     </button>
     <link rel="stylesheet" href="assets/css/relStyle.css">
