@@ -14,7 +14,7 @@
         Imprimir relatorio
         </button>
 
-        <button class="excel-button" id="report" onclick="gerarExcel()">
+        <button class="excel-button" id="excel" onclick="gerarExcel()">
         Gerar EXCEL
         </button>
 
