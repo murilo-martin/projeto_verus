@@ -206,6 +206,27 @@
   background: #4682b4;
   transform: translateY(-2px);
 }
+
+.excel-button {
+  position: fixed;
+  top: 70px;
+  right: 20px;
+  background: #87eb8f; 
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: all 0.3s;
+  z-index: 1000;
+}
+
+.excel-button:hover {
+  background: #2e8b57; 
+  transform: translateY(-2px);
+}
+
 .container-print{
    width: 100%;
    display: flex;

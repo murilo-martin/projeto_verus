@@ -13,6 +13,11 @@
         <button class="report-button" id="report" onclick="imprimir()">
         Imprimir relatorio
         </button>
+
+        <button class="excel-button" id="report" onclick="gerarExcel()">
+        Gerar EXCEL
+        </button>
+
         <button class="back-button" id="back"  onclick="window.location.href='relatorios.php'">
         <i class="fas fa-arrow-left"></i> Voltar
     </button>

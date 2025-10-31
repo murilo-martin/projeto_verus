@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Tempo de geração: 22/10/2025 às 04:22
+-- Tempo de geração: 31/10/2025 às 04:05
 -- Versão do servidor: 10.4.32-MariaDB
 -- Versão do PHP: 8.2.12
 
@@ -45,8 +45,7 @@ CREATE TABLE `empresas` (
 --
 
 INSERT INTO `empresas` (`id`, `cnpj`, `nome`, `setor`, `email`, `senha`, `data_cadastro`, `ativo`) VALUES
-(1, '99.999.999/9999-99', 'Empresateste', 'ti', 'empresateste@gmail.com', '123', '2025-10-22 02:13:23', 1),
-(2, '88.888.888/8888-88', 'Empresateste2', 'varejo', 'empresateste2@gmail.com', '1234', '2025-10-22 02:14:47', 1);
+(1, '99.999.999/9999-99', 'empresa1', 'ti', 'empresa1@empresa.com', '123', '2025-10-31 03:02:22', 1);
 
 -- --------------------------------------------------------
 
@@ -70,8 +69,35 @@ CREATE TABLE `funcionarios` (
 --
 
 INSERT INTO `funcionarios` (`id`, `email`, `nome`, `empresa_id`, `cargo`, `senha`, `data_cadastro`, `ativo`) VALUES
-(1, 'funcionario@gmail.com', 'Funcionario', 1, 'Desenvolvedor', '123', '2025-10-22 02:13:48', 1),
-(2, 'funcionario2@gmail.com', 'Funcionario2', 2, 'Desenvolvedor', '1234', '2025-10-22 02:15:33', 1);
+(1, 'adm@adm.com', 'admverus@verus.com', 0, 'ADM', '123adm', '2025-10-31 03:01:35', 1),
+(2, 'funcionario@gmail.com', 'Funcionario 1', 1, 'Auxiliar', '123', '2025-10-31 03:03:28', 1);
+
+-- --------------------------------------------------------
+
+--
+-- Estrutura para tabela `perguntas`
+--
+
+CREATE TABLE `perguntas` (
+  `id` int(11) NOT NULL,
+  `primeirapergunta` varchar(99) DEFAULT NULL,
+  `segundapergunta` varchar(99) DEFAULT NULL,
+  `terceirapergunta` varchar(99) DEFAULT NULL,
+  `quartapergunta` varchar(99) DEFAULT NULL,
+  `quintapergunta` varchar(99) DEFAULT NULL,
+  `sextapergunta` varchar(99) DEFAULT NULL,
+  `setimapergunta` varchar(99) DEFAULT NULL,
+  `oitavapergunta` varchar(99) DEFAULT NULL,
+  `nonapergunta` varchar(99) DEFAULT NULL,
+  `decimapergunta` varchar(99) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Despejando dados para a tabela `perguntas`
+--
+
+INSERT INTO `perguntas` (`id`, `primeirapergunta`, `segundapergunta`, `terceirapergunta`, `quartapergunta`, `quintapergunta`, `sextapergunta`, `setimapergunta`, `oitavapergunta`, `nonapergunta`, `decimapergunta`) VALUES
+(1, 'Como você avalia o ambiente de trabalho  ', 'Como você avalia a liderança e gestão em sua área', 'Como você avalia a comunicação interna da empresa', 'Como você avalia as oportunidades de crescimento profissional', 'Como você avalia o reconhecimento e valorização dos funcionários', 'Como você avalia o equilíbrio entre vida pessoal e profissional', 'Como você avalia os benefícios oferecidos pela empresa', 'Como você avalia o relacionamento com seus colegas de trabalho', 'Como você avalia a estrutura e processos organizacionais', ' Como você avalia o clima organizacional geral na empresa');
 
 -- --------------------------------------------------------
 
@@ -99,14 +125,6 @@ CREATE TABLE `questionarios` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
--- Despejando dados para a tabela `questionarios`
---
-
-INSERT INTO `questionarios` (`id`, `funcionario_id`, `empresa_id`, `comunicacao`, `lideranca`, `ambiente`, `reconhecimento`, `crescimento`, `equilibrio`, `beneficios`, `relacionamento`, `estrutura`, `climaOrganizacional`, `sugestoes`, `data_envio`, `anonimo`) VALUES
-(1, 1, 1, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 'Estou satisfeito com a empresa', '2025-10-22 02:14:13', 1),
-(2, 2, 2, 4, 4, 4, 4, 4, 3, 4, 4, 4, 3, 'Estou mais ou menos satisfeito com o clima na empresa', '2025-10-22 02:16:13', 0);
-
---
 -- Índices para tabelas despejadas
 --
 
@@ -123,6 +141,12 @@ ALTER TABLE `funcionarios`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Índices de tabela `perguntas`
+--
+ALTER TABLE `perguntas`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Índices de tabela `questionarios`
 --
 ALTER TABLE `questionarios`
@@ -136,7 +160,7 @@ ALTER TABLE `questionarios`
 -- AUTO_INCREMENT de tabela `empresas`
 --
 ALTER TABLE `empresas`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT de tabela `funcionarios`
@@ -145,10 +169,16 @@ ALTER TABLE `funcionarios`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
+-- AUTO_INCREMENT de tabela `perguntas`
+--
+ALTER TABLE `perguntas`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
 -- AUTO_INCREMENT de tabela `questionarios`
 --
 ALTER TABLE `questionarios`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

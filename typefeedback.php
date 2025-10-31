@@ -106,14 +106,13 @@
     </footer>
 	<div id="modal-feed" class="modal-feed">
             <div class="modal-content-feed">
-                <span class="close" onclick="closeModal()">&times;</span>
+                <span class="close" onclick="closeModalSimple()">&times;</span>
                 <h2 id="title"></h2>
                 <div class="text" id="text">
                     
                 </div>
             </div>
         </div>
-=======
 	<div class="modal" tabindex="-1" id="modal">
   <div class="modal-dialog">
     <div class="modal-content">

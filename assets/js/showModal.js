@@ -153,6 +153,7 @@ document.getElementById("form_quest").addEventListener("submit", (event) => {
   });
 });
 
+
 function showmodal(titulo, texto) {
   $("#title").html(titulo);
   $("#text").html(texto);
@@ -161,10 +162,11 @@ function showmodal(titulo, texto) {
 
   $("body").addClass("modal-open");
 }
-function closeModal() {
+function closeModalSimple() {
   $("#modal-feed").fadeOut(300);
   $("#title").html("");
 }
+
 function closeModal(type) {
     if(type == "edit"){
         modal_edit.hide();

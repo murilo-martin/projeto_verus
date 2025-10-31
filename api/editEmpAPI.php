@@ -12,6 +12,7 @@
     
     mysqli_query($conexao, "UPDATE `empresas` SET `cnpj`='$cnpj_emp',`nome`='$nome_emp',`setor`='$setor_emp',`email`='$email_emp',`senha`='$senha_emp',`ativo`='$ativo_emp' WHERE id = '$id'");
 
+    mysqli_query($conexao,"UPDATE funcionarios SET ativo = 1 WHERE empresa_id = '$id'");
     mysqli_close($conexao);
     
 ?>
